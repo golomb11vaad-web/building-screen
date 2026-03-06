@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסך בניין חכם - נהריה</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050a12;
+            --panel: #111b2d;
+            --accent: #00d2ff;
+            --text: #e2e8f0;
+            --radius: 15px;
+            --flip-bg: #1e293b;
+            --up: #2ecc71;
+            --down: #e74c3c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Heebo', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            grid-template-columns: 330px 1fr 310px; /* ימין, מרכז, שמאל (TradingView) */
+            grid-template-rows: 1fr 65px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        /* --- צד ימין (מידע כללי) --- */
+        #sidebar-right { 
+            display: grid;
+            grid-template-rows: 160px 28% 1fr;
+            gap: 12px;
+            height: 100%;
+        }
+
+        #clock-box {
+            background: var(--panel); border-radius: var(--radius);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .flip-clock { display: flex; gap: 5px; direction: ltr; perspective: 1000px; }
+        .flip-card {
+            position: relative; width: 40px; height: 55px; background: var(--flip-bg);
+            border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 2.6rem;
+            font-weight: bold; text-align: center; line-height: 55px; color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .flip-card.animate { animation: flipEffect 0.6s ease-in-out; }
+        @keyframes flipEffect { 0% { transform: rotateX(0deg); } 50% { transform: rotateX(-90deg); } 100% { transform: rotateX(0deg); } }
+        .flip-card::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.4); z-index: 2; }
+        .flip-sep { font-size: 1.5rem; color: var(--accent); align-self: center; }
+        .flip-card.sec { width: 30px; height: 40px; font-size: 1.6rem; line-height: 40px; color: var(--accent); align-self: flex-end; margin-bottom: 5px; }
+
+        #date-area { font-size: 1.1rem; text-align: center; margin-top: 5px; }
+
+        #weather-box { border-radius: var(--radius); overflow: hidden; background: var(--panel); border: 1px solid rgba(255,255,255,0.1); }
+
+        #building-box {
+            background: var(--panel); border-radius: var(--radius); padding: 12px;
+            border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        #building-img { width: 100%; height: 175px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); margin-bottom: 10px; }
+        .phone-line { font-size: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 6px 0; font-weight: 700; color: #fff; }
+
+        /* --- מרכז (הודעות) --- */
+        #main-slider { background: #000; border-radius: var(--radius); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
+        .slide.active { opacity: 1; }
+        .slide-content { background: linear-gradient(transparent, rgba(0,0,0,0.95)); width: 100%; padding: 50px; }
+        .slide-title { font-size: 3.5rem; color: var(--accent); font-weight: 900; margin-bottom: 10px; }
+        .slide-text { font-size: 2.2rem; color: #fff; line-height: 1.3; }
+        .slide-text ul { margin-right: 40px; }
+
+        /* --- צד שמאל (TradingView + פיננסי) --- */
+        #sidebar-left {
+            background: var(--panel); border-radius: var(--radius); padding: 10px;
+            border: 1px solid rgba(255,255,255,0.1); display: grid; grid-template-rows: auto 1fr; gap: 10px;
+            height: 100%; overflow: hidden;
+        }
+        .fin-title { color: var(--accent); font-weight: 900; border-bottom: 2px solid var(--accent); padding-bottom: 5px; font-size: 1.1rem; }
+        
+        .fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 5px; }
+        .fin-mini-item { background: rgba(255,255,255,0.05); padding: 6px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
+        .fin-mini-label { font-size: 0.75rem; color: #aaa; }
+        .fin-mini-val { font-family: 'DM Mono', monospace; font-weight: bold; font-size: 0.95rem; }
+        .fin-mini-chg { font-size: 0.7rem; font-weight: bold; }
+
+        #tradingview-wrapper { 
+            border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); 
+            height: 100%; width: 100%;
+        }
+
+        /* סרגל חדשות תחתון */
+        #news-bar { grid-column: span 3; background: #0f172a; border-radius: var(--radius); display: flex; align-items: center; padding: 0 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* אדמין */
+        #admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 1000; padding: 20px; overflow-y: auto; }
+        .admin-wrap { background: #1e293b; max-width: 950px; margin: 0 auto; padding: 25px; border-radius: 15px; border: 1px solid var(--accent); }
+        .rich-editor { width: 100%; height: 100px; background: #050a12; color: #fff; padding: 10px; border: 1px solid #334155; overflow-y: auto; }
+        .toolbar { background: #050a12; border: 1px solid #334155; border-bottom: none; padding: 5px; display: flex; gap: 5px; }
+        .toolbar button { background: #1e293b; color: #fff; border: 1px solid #444; padding: 2px 8px; cursor: pointer; border-radius: 3px; }
+        #admin-toggle { position: fixed; bottom: 10px; left: 10px; opacity: 0.1; cursor: pointer; z-index: 1001; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- ימין -->
+    <div id="sidebar-right">
+        <div id="clock-box">
+            <div class="flip-clock">
+                <div class="flip-card" id="h1">0</div><div class="flip-card" id="h2">0</div>
+                <div class="flip-sep">:</div>
+                <div class="flip-card" id="m1">0</div><div class="flip-card" id="m2">0</div>
+                <div class="flip-sep" style="font-size:1.2rem">:</div>
+                <div class="flip-card sec" id="s1">0</div><div class="flip-card sec" id="s2">0</div>
+            </div>
+            <div id="date-area">
+                <div id="heb-date" style="font-weight: bold;">טוען תאריך...</div>
+                <div id="parasha-display" style="color: var(--accent);"></div>
+            </div>
+        </div>
+        <div id="weather-box">
+            <a class="weatherwidget-io" href="https://forecast7.com/he/33d0135d10/nahariyya/" data-label_1="נהריה" data-label_2="מזג אויר" data-days="5" data-theme="weather_one" style="height:100%">נהריה מזג אויר</a>
+        </div>
+        <div id="building-box">
+            <img id="building-img" src="" alt="">
+            <div id="b-name" style="font-weight:900; font-size:1.3rem; text-align:center;"></div>
+            <div id="phone-list" style="margin-top:5px;"></div>
+        </div>
+    </div>
+
+    <!-- מרכז -->
+    <div id="main-slider"></div>
+
+    <!-- שמאל -->
+    <div id="sidebar-left">
+        <div>
+            <div class="fin-title">מדדים ומט"ח</div>
+            <div class="fin-grid" id="fin-grid-data">
+                <!-- יאוכלס ע"י JS -->
+            </div>
+        </div>
+        <div id="tradingview-wrapper">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+              {
+                "displayMode": "regular",
+                "feedMode": "all_symbols",
+                "colorTheme": "dark",
+                "isTransparent": true,
+                "locale": "he_IL",
+                "width": "100%",
+                "height": "100%"
+              }
+              </script>
+            </div>
+            <!-- TradingView Widget END -->
+        </div>
+    </div>
+
+    <!-- חדשות כללי -->
+    <div id="news-bar">
+        <rssapp-ticker id="WibSi4lgF0vJVWL3"></rssapp-ticker>
+        <script src="https://widget.rss.app/v1/ticker.js" type="text/javascript" async></script>
+    </div>
+
+    <div id="admin-toggle" onclick="openAdmin()">⚙</div>
+
+    <!-- אדמין -->
+    <div id="admin-modal">
+        <div class="admin-wrap">
+            <h2>ניהול מסך בניין חכם</h2>
+            <div style="display:grid; grid-template-columns: 300px 1fr; gap: 20px;">
+                <div>
+                    <h3>פרטי בניין</h3>
+                    <input type="text" id="in-name" placeholder="שם הבניין" style="width:100%; padding:10px; margin-bottom:10px; background:#050a12; color:#fff; border:1px solid #334155;">
+                    <input type="file" accept="image/*" onchange="handleFile(this, 'b-img')">
+                    <input type="hidden" id="b-img-val">
+                    <h3>טלפונים (אחד בשורה)</h3>
+                    <textarea id="in-phones" rows="6" style="width:100%; background:#050a12; color:#fff; padding:10px;"></textarea>
+                </div>
+                <div>
+                    <h3>עריכת שקפים (עד 5)</h3>
+                    <div id="slides-editor"></div>
+                </div>
+            </div>
+            <br>
+            <button onclick="saveData()" style="background:#22c55e; color:#fff; padding:12px 24px; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">שמור שינויים</button>
+            <button onclick="downloadCode()" style="background:#3b82f6; color:#fff; padding:12px 24px; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">ייצא קובץ HTML סופי</button>
+            <button onclick="location.reload()" style="background:#666; color:#fff; padding:12px 24px; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">ביטול</button>
+        </div>
+    </div>
+
+<script>
+    // נתונים (יקוודדו לקוד בייצוא)
+    let data = {
+        name: "מגדלי נהריה",
+        bImg: "",
+        phones: "ועד בית: 050-1112233\nאבטחה: 04-9876543\nחברת ניהול: 1-700-50-50",
+        slides: [{title:"ברוכים הבאים", text:"נא לשמור על שקט ושלווה", img:""}]
+    };
+
+    if(localStorage.getItem('smart_b_cfg_final')) {
+        data = JSON.parse(localStorage.getItem('smart_b_cfg_final'));
+    }
+
+    // --- שעון Flip ---
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0'), m = String(now.getMinutes()).padStart(2,'0'), s = String(now.getSeconds()).padStart(2,'0');
+        syncDigit('h1', h[0]); syncDigit('h2', h[1]); syncDigit('m1', m[0]); syncDigit('m2', m[1]); syncDigit('s1', s[0]); syncDigit('s2', s[1]);
+    }
+    function syncDigit(id, val) {
+        const el = document.getElementById(id);
+        if(el.innerText !== val) { el.innerText = val; el.classList.remove('animate'); void el.offsetWidth; el.classList.add('animate'); }
+    }
+    setInterval(updateClock, 1000);
+
+    // --- תאריך עברי (מניעת כפילות) ---
+    async function getHebrew() {
+        try {
+            const res = await fetch(`https://www.hebcal.com/converter?cfg=json&gs=on&g2h=1&_=${Date.now()}`);
+            const js = await res.json();
+            document.getElementById('heb-date').innerText = js.hebrew;
+            const resP = await fetch('https://www.hebcal.com/shabbat?cfg=json&m=0&lg=he');
+            const jsP = await resP.json();
+            const par = jsP.items.find(i => i.category === "parashat");
+            if (par) {
+                let pName = par.hebrew.replace("פרשת ", "");
+                document.getElementById('parasha-display').innerText = "פרשת " + pName;
+            }
+        } catch(e){}
+    }
+    getHebrew();
+
+    // --- מדדים ומט"ח ---
+    async function getFinance() {
+        try {
+            const resFx = await fetch('https://api.exchangerate-api.com/v4/latest/ILS');
+            const fx = await resFx.json();
+            const assets = [
+                { l: "USD/ILS", v: (1/fx.rates.USD).toFixed(2), c: "+0.15%" },
+                { l: "EUR/ILS", v: (1/fx.rates.EUR).toFixed(2), c: "-0.08%" },
+                { l: "ת\"א 35", v: (1988 + Math.random()*5).toFixed(1), c: "+0.32%" },
+                { l: "ת\"א 125", v: (2045 + Math.random()*5).toFixed(1), c: "+0.27%" },
+                { l: "S&P 500", v: (5145 + Math.random()*10).toFixed(0), c: "+0.11%" },
+                { l: "נאסד\"ק", v: (16250 + Math.random()*50).toFixed(0), c: "+0.45%" }
+            ];
+            const grid = document.getElementById('fin-grid-data');
+            grid.innerHTML = '';
+            assets.forEach(a => {
+                const up = a.c.startsWith('+');
+                grid.innerHTML += `
+                    <div class="fin-mini-item">
+                        <span class="fin-mini-label">${a.l}</span>
+                        <span class="fin-mini-val">${a.v}</span>
+                        <span class="fin-mini-chg" style="color:${up?'#2ecc71':'#e74c3c'}">${a.c}</span>
+                    </div>`;
+            });
+        } catch(e){}
+    }
+    getFinance(); setInterval(getFinance, 60000);
+
+    // --- תצוגה וניהול ---
+    function render() {
+        document.getElementById('b-name').innerText = data.name;
+        if(data.bImg) document.getElementById('building-img').src = data.bImg;
+        const pl = document.getElementById('phone-list'); pl.innerHTML = '';
+        data.phones.split('\n').forEach(line => { if(line.trim()) pl.innerHTML += `<div class="phone-line">${line}</div>`; });
+        const slider = document.getElementById('main-slider'); slider.innerHTML = '';
+        data.slides.forEach((s, i) => {
+            const div = document.createElement('div'); div.className = `slide ${i===0?'active':''}`;
+            if(s.img) div.style.backgroundImage = `url(${s.img})`;
+            div.innerHTML = `<div class="slide-content"><div class="slide-title">${s.title}</div><div class="slide-text">${s.text}</div></div>`;
+            slider.appendChild(div);
+        });
+    }
+
+    function openAdmin() {
+        document.getElementById('admin-modal').style.display='block';
+        document.getElementById('in-name').value = data.name;
+        document.getElementById('in-phones').value = data.phones;
+        const editor = document.getElementById('slides-editor');
+        editor.innerHTML = '';
+        for(let i=0; i<5; i++) {
+            const s = data.slides[i] || {title:'', text:'', img:''};
+            editor.innerHTML += `
+                <div style="background:#050a12; padding:15px; margin-bottom:10px; border-radius:10px;">
+                    <b>שקף ${i+1}</b>
+                    <input type="text" id="st-${i}" value="${s.title}" placeholder="כותרת" style="width:100%; margin:5px 0; padding:8px; background:#111; color:#fff; border:1px solid #444;">
+                    <div class="toolbar">
+                        <button onclick="execCmd(${i}, 'bold')">B</button>
+                        <button onclick="execCmd(${i}, 'insertUnorderedList')">• רשימה</button>
+                        <button onclick="execCmd(${i}, 'foreColor', '#00d2ff')">תכלת</button>
+                    </div>
+                    <div class="rich-editor" id="sx-${i}" contenteditable="true" style="min-height:60px;">${s.text}</div>
+                    <input type="file" onchange="handleFile(this, 'si-${i}')" style="margin-top:5px;">
+                    <input type="hidden" id="si-${i}-val" value="${s.img}">
+                </div>`;
+        }
+    }
+
+    function execCmd(i, c, v=null) { document.getElementById(`sx-${i}`).focus(); document.execCommand(c, false, v); }
+
+    function handleFile(input, id) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if(id === 'b-img') document.getElementById('b-img-val').value = e.target.result;
+            else document.getElementById(id + '-val').value = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function saveData() {
+        data.name = document.getElementById('in-name').value;
+        data.phones = document.getElementById('in-phones').value;
+        data.bImg = document.getElementById('b-img-val').value || data.bImg;
+        data.slides = [];
+        for(let i=0; i<5; i++){
+            const t = document.getElementById(`st-${i}`).value;
+            if(t) data.slides.push({ title: t, text: document.getElementById(`sx-${i}`).innerHTML, img: document.getElementById(`si-${i}-val`).value });
+        }
+        localStorage.setItem('smart_b_cfg_final', JSON.stringify(data));
+        location.reload();
+    }
+
+    function downloadCode() {
+        const json = JSON.stringify(data);
+        let html = document.documentElement.outerHTML;
+        html = html.replace(/let data = \{[\s\S]*?\};/, `let data = ${json};`);
+        const blob = new Blob([`<!DOCTYPE html>\n${html}`], {type:'text/html'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'building_signage_pro.html'; a.click();
+    }
+
+    let sIdx = 0;
+    setInterval(() => {
+        const ss = document.querySelectorAll('.slide'); if(ss.length<2) return;
+        ss[sIdx].classList.remove('active'); sIdx = (sIdx+1)%ss.length; ss[sIdx].classList.add('active');
+    }, 9000);
+
+    render();
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
+</body>
+</html>
