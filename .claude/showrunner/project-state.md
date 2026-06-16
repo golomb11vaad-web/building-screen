@@ -45,14 +45,23 @@ Passing evidence:
   audit gate passed, one Medium finding resolved (ARC-VERIFY-001:
   `svelte/internal` replaced with public `tick`).
 - Arc Phase 1 merged to `main` (merge commit `79da136`), 2026-06-16.
+- Arc Phase 2 ("Admin Message Manager + Image Upload") plan written and
+  `prompt-ready` (`.claude/showrunner/plans/2026-06-16-admin-message-manager/`,
+  16 files: `questions.md` RESOLVED, `overview.md`, `task-1.md`..`task-13.md`,
+  `prompt.md`), 2026-06-16.
 
 ## In Progress
 
-- None - Arc Phase 1 is on `main`.
+- Arc Phase 2 ("Admin Message Manager + Image Upload") plan is `prompt-ready`.
+  Plan: `.claude/showrunner/plans/2026-06-16-admin-message-manager/`.
+  arc_id: `arc-phase2-admin-message-manager-2026-06-16`.
+  Base commit: `41362ea`.
+  Feature branch (not yet created): `feat/admin-message-manager`.
 
 ## Next
 
-1. Plan Arc Phase 2 ("Admin Message Manager + Image Upload") via `/arc plan`.
+1. Run Arc Phase 2 via `/arc run` — dispatch the implementer prompt, await
+   Step 0 describe-back approval, then implement Tasks 1–13.
 
 ## Deferred
 

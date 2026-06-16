@@ -265,3 +265,53 @@
 - Remote push: SKIPPED — no remote configured.
 - Gate state: `MERGED`.
 - Arc Phase 1 complete.
+
+## Phase 6 Dry Run — Stage 6 (Arc Plan: Phase 2)
+
+- `/arc plan` ran for Arc Phase 2 ("Admin Message Manager + Image Upload"),
+  consuming the same spec file used for Phase 1
+  (`.claude/showrunner/specs/phase-1-core-billboard-loop.md`, section 10 step
+  2, whole-file digest
+  `78226d176fe4ec34f36c16b0f02250d94936d33c16395d9e42574d091755cb20`).
+- Plan written to `.claude/showrunner/plans/2026-06-16-admin-message-manager/`.
+
+### Decision Gate
+
+- One Human Decision surfaced and resolved: curated background palette
+  inventor sign-off (spec section 7 outstanding item). Emil approved all six
+  CSS-gradient backgrounds as-is (Option A), 2026-06-16.
+- Eight Convention Defaults locked:
+  - Admin session: HttpOnly cookie, SameSite=Strict, 8-hour expiry;
+    token = HMAC-SHA256(ADMIN_PASSWORD, SESSION_SECRET).
+  - Env vars: ADMIN_PASSWORD + SESSION_SECRET in `.env` (gitignored);
+    `.env.example` committed.
+  - Admin URLs: `/admin/login` (login/logout), `/admin` (main panel).
+  - Image upload: multipart in admin action; `data/uploads/<uuid>.<ext>`;
+    JPEG/PNG/WebP; 10 MB max.
+  - Image serving: SvelteKit `GET /uploads/[filename]` server route.
+  - Display refresh: `invalidateAll()` every 3 minutes in `+page.svelte`.
+  - Admin list order: pinned first, then `updatedAt` descending.
+  - XSS posture: all message text via `{text}` bindings (never `{@html}`).
+- Gate state: `RESOLVED`.
+
+### Arc Plan Report
+
+- Feature branch: `feat/admin-message-manager`.
+- Base commit: `41362ea511116245714d1e77d90fb08621bfe20a` (HEAD of `main` after
+  Phase 1 merge).
+- Plan outputs:
+  - `questions.md` — Arc Decision Gate (`RESOLVED`).
+  - `overview.md` — outcome, non-goals, starting surface, files-and-
+    responsibilities table (15 new, 3 modified), 13-task table.
+  - `task-1.md` .. `task-13.md` — exact RED/GREEN/REFACTOR steps covering:
+    auth helpers + env bootstrap; admin CRUD helpers (pure functions); image
+    upload helper; image serving route; login route + page; admin route guard +
+    message list; create form (plain, style picker, curated backgrounds, image
+    upload, schedule fields); edit; delete + pin toggle; display refresh timer;
+    audit gate + commit.
+  - `prompt.md` — rendered implementer prompt; ends
+    `STOP: Perform Step 0 describe-back now. Await APPROVED before any code.`
+- arc_id: `arc-phase2-admin-message-manager-2026-06-16`.
+- Result: Arc Phase 2 plan status `prompt-ready`.
+- Gate state: `RESOLVED`.
+- Next: `/arc run` — dispatch `prompt.md` to a cold, isolated implementer.
