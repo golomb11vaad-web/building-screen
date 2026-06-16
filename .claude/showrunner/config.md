@@ -89,8 +89,8 @@ merge:
   first_parent_commit_count: 2
 
 forge:
-  status: uninitialized
-  soul_file: disabled
+  status: ready
+  soul_file: docs/soul.md
   voice_rules: []
   design_principle: disabled
   asset_reservations: []
@@ -113,21 +113,21 @@ forge:
     seam: "spec section 8 to section 9"
 
 arc:
-  status: uninitialized
+  status: ready
   additional_step0_reads: []
   planning:
     plans_directory: .claude/showrunner/plans
     prompts_directory: untracked
   test_lanes:
     server: disabled
-    web: disabled
+    web: "npm test"
     mobile: disabled
   migration:
     enabled: false
     pre_migration_fixture_required: true
   gates:
     audit: "/audit"
-    creative: "/wow-check"
+    creative: disabled
   smoke:
     server: disabled
     web: disabled
