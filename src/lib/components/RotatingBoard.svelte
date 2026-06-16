@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	// @ts-ignore – flush is not in Svelte 4's public types but is a stable runtime export
-	import { flush } from 'svelte/internal';
 	import type { Message } from '../types';
 	import MessageCard from './MessageCard.svelte';
 
@@ -14,7 +12,6 @@
 	if (messages.length > 1) {
 		timer = setInterval(() => {
 			current = (current + 1) % messages.length;
-			flush();
 		}, intervalMs);
 	}
 

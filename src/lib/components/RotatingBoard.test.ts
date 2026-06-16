@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { tick } from 'svelte';
 import { cleanup, render, screen } from '@testing-library/svelte';
 import RotatingBoard from './RotatingBoard.svelte';
 import type { Message } from '../types';
@@ -39,7 +40,7 @@ describe('RotatingBoard - rotation', () => {
 		expect(screen.getByText('הודעה ראשונה')).toBeInTheDocument();
 	});
 
-	it('advances to the next message after the rotation interval', () => {
+	it('advances to the next message after the rotation interval', async () => {
 		vi.useFakeTimers();
 
 		const messages = [
@@ -49,6 +50,7 @@ describe('RotatingBoard - rotation', () => {
 
 		render(RotatingBoard, { messages });
 		vi.advanceTimersByTime(8000);
+		await tick();
 
 		expect(screen.getByText('הודעה שנייה')).toBeInTheDocument();
 	});
