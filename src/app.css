@@ -19,6 +19,8 @@
 
 	--motion-fade: 600ms ease;
 	--motion-slideshow: 1200ms ease;
+
+	--sidebar-width: 28rem;
 }
 
 * {

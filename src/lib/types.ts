@@ -46,3 +46,19 @@ export interface CuratedBackground {
 	label: string;
 	css: string;
 }
+
+export interface WeatherData {
+	temperatureCurrent: number;
+	temperatureMax: number;
+	temperatureMin: number;
+	weatherCode: number;
+	conditionLabel: string;
+	fetchedAt: string;
+}
+
+export interface NewsItem {
+	title: string;
+	source: 'Ynet' | 'Calcalist';
+	link: string;
+	publishedAt: string;
+}

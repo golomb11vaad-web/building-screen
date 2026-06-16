@@ -27,13 +27,13 @@ const msg: Message = {
 describe('Display page refresh timer', () => {
   it('renders without error', () => {
     expect(() =>
-      render(DisplayPage, { props: { data: { rotation: [msg] } } })
+      render(DisplayPage, { props: { data: { rotation: [msg], weather: null, news: [] } } })
     ).not.toThrow();
   });
 
   it('calls invalidateAll after the refresh interval', async () => {
     vi.useFakeTimers();
-    render(DisplayPage, { props: { data: { rotation: [msg] } } });
+    render(DisplayPage, { props: { data: { rotation: [msg], weather: null, news: [] } } });
     vi.advanceTimersByTime(3 * 60 * 1000);
     expect(mockInvalidateAll).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
