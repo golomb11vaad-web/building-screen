@@ -2,35 +2,35 @@
 
 > Authority: operational
 > Status: current
-> As of: 2026-06-16
+> As of: 2026-06-16 (Phase 3 merge)
 > Superseded by: none
 > Other authority sources: `docs/soul.md` (constitution, foundational)
 
 ## Current Phase
 
-**Phase 2 - Admin Message Manager + Image Upload**
+**Phase 3 - Weather + News Widgets and Sidebar Integration**
 
 Outcome:
 
-Building staff authenticate via a shared password and manage messages through
-a full admin web form at `/admin` — creating, editing, deleting, pinning,
-scheduling, and attaching images. The public display at `/` auto-refreshes
-every 3 minutes so changes appear without manual reload. Uploaded images are
-served from `data/uploads/` via a path-traversal-guarded server route. All
-message text is rendered via `{text}` bindings (never `{@html}`).
+The public display at `/` shows a persistent left-edge sidebar (RTL) with an
+Open-Meteo weather widget (current temperature, Hebrew WMO condition label,
+daily high/low, "updated at" time) above a news headlines widget (up to 5 Ynet
++ 5 Calcalist headlines in Hebrew). Both widgets degrade gracefully to
+last-known-good data on fetch failure, and show a neutral Hebrew placeholder
+if nothing has ever loaded. The message board occupies the dominant right-side
+area. The 3-minute `invalidateAll()` refresh also re-fetches weather and news
+on cache miss (30-min and 15-min TTLs respectively).
 
 Passing evidence:
 
-- Staff log in at `/admin/login` with a shared password; session is an
-  HttpOnly, SameSite=Strict, 8-hour cookie.
-- Staff create a message with style (plain / background / photoSlideshow),
-  optional curated background, image upload, and optional schedule (expiry,
-  active days, date range).
-- Staff edit, delete, pin/unpin messages; pinned messages surface first in
-  the admin list.
-- The display page auto-refreshes via `invalidateAll()` every 3 minutes.
-- Uploaded images are served at `/uploads/[filename]` with immutable
-  cache headers and path traversal guard.
+- A resident glances at the lobby display and sees Hebrew weather (temperature,
+  condition, high/low) and news headlines (Ynet) in the left sidebar alongside
+  the message board — all in Hebrew, RTL, legible at a glance.
+- If weather or news fetch fails, a neutral Hebrew placeholder is shown rather
+  than a blank panel or error message.
+- Calcalist RSS URL is currently dead (404); widget shows Ynet-only until a
+  valid Calcalist URL is configured (D-006 direction preserved; graceful
+  degradation via `Promise.allSettled`).
 
 ## Completed
 
@@ -62,20 +62,25 @@ Passing evidence:
   and `prompt-ready` (`.claude/showrunner/plans/2026-06-16-weather-news-widgets/`,
   11 files: `questions.md` EMPTY, `overview.md`, `task-1.md`..`task-8.md`,
   `prompt.md`), 2026-06-16.
+- Arc Phase 3 implemented and verified: `SHIP` on `493fba1`
+  (`feat/weather-news-widgets`), 2026-06-16. 115/115 tests pass (21 test
+  files), build clean, audit gate passed. Key process note: Calcalist RSS URL
+  is dead (404); widget degrades gracefully to Ynet-only via `Promise.allSettled`.
+- Arc Phase 3 merged to `main` (merge commit `99f9f7e`), 2026-06-16.
 
 ## In Progress
 
-- Arc Phase 3 ("Weather + News Widgets and Sidebar Integration") plan is
-  `prompt-ready`.
-  Plan: `.claude/showrunner/plans/2026-06-16-weather-news-widgets/`.
-  arc_id: `arc-phase3-weather-news-widgets-2026-06-16`.
-  Base commit: `46c5ad8c1e52c7ec5581a232a53e5ce8bae5d491`.
-  Feature branch (not yet created): `feat/weather-news-widgets`.
+- None.
 
 ## Next
 
-1. Run Arc Phase 3 via `/arc run` — dispatch the implementer prompt, await
-   Step 0 describe-back approval, then implement Tasks 1–8.
+1. Arc Phase 4 ("Integration, content polish, and human smoke") — final
+   empty/error-state copy tuning, refresh-cadence tuning, and human smoke
+   check on the actual wall-mounted display hardware once available
+   (`smoke.required_for: [runtime_state, device, external_ops]`).
+2. Resolve Calcalist RSS URL (D-006): find a working Calcalist RSS feed URL
+   and update `CALCALIST_RSS` in `src/lib/server/news.ts` — no other code
+   changes required.
 
 ## Deferred
 
@@ -134,9 +139,17 @@ Passing evidence:
   before `/arc merge` checks remote tips; remote push was skipped in Phase 1
   and Phase 2.
 - Moderate Svelte SSR XSS advisories (`@sveltejs/kit`) exist in the
-  dependency tree. Phase 2 admin form audited: all message text rendered via
-  `{text}` bindings (never `{@html}`); risk remains low for current scope.
-  Phase 3 must re-audit if any new user-input paths are introduced.
+  dependency tree. Phase 2 admin form and Phase 3 news widget both audited:
+  all text rendered via `{text}` / `{item.title}` bindings (never `{@html}`);
+  risk remains low for current scope.
+- **Calcalist RSS URL dead**: `https://www.calcalist.co.il/Rss/0,7340,L-8,00.xml`
+  returns HTTP 404 (confirmed during Phase 3 Step 0). D-006 is preserved as
+  direction; `getNews()` degrades gracefully to Ynet-only via
+  `Promise.allSettled`. Update `CALCALIST_RSS` in `src/lib/server/news.ts`
+  when a valid URL is found — no other code changes required.
+- RSS feed format drift: Ynet/Calcalist item field names or structure may
+  change. The `parseRssItems` try/catch returns empty arrays on parse error;
+  last-known-good cache mitigates short outages but not permanent changes.
 - `esbuild` high advisory (dev server path only) — do not expose the Vite
   dev server on untrusted networks.
 

@@ -464,3 +464,94 @@
 - Result: Arc Phase 3 plan status `prompt-ready`.
 - Gate state: `EMPTY`.
 - Next: `/arc run` — dispatch `prompt.md` to a cold, isolated implementer.
+
+## Phase 6 Dry Run — Stage 10 (Arc Run: Phase 3)
+
+- `/arc run` executed against Arc Phase 3 plan
+  (`.claude/showrunner/plans/2026-06-16-weather-news-widgets/`).
+- Dispatch record:
+  `arc_id: arc-phase3-weather-news-widgets-2026-06-16`,
+  `feature_branch: feat/weather-news-widgets`,
+  `base_branch: main`,
+  `base_commit: e915e47` (current main HEAD — one ahead of planned `46c5ad8`
+  by the Phase 3 plan docs commit; approved in pre-flight corrections),
+  `spec_digest: 78226d176fe4ec34f36c16b0f02250d94936d33c16395d9e42574d091755cb20`.
+
+### Step 0 Describe-Back
+
+- Cold implementer agent performed Step 0 describe-back and identified one
+  deviation from plan: **Calcalist RSS URL** (`https://www.calcalist.co.il/Rss/
+  0,7340,L-8,00.xml`) returns HTTP 404. The live endpoint was unreachable;
+  multiple alternative URL variants also 404.
+- Architect decision: proceed with the dead URL in code. `Promise.allSettled`
+  already handles this — Calcalist fetch fails, `getNews()` returns Ynet-only
+  items, widget degrades gracefully. D-006 (Calcalist as source) preserved as
+  direction; URL can be updated without code changes when a valid one is found.
+  Recorded as a residual risk in the ship report.
+- All other surface verifications confirmed: Open-Meteo endpoint and field names
+  correct; Ynet RSS resolves with expected `title`/`link`/`pubDate` fields.
+- Approval contract digest authorized:
+  `1c0d8ba3f9f0d25c5d4d130cc055f4e772f0c0a8a9341b1587beb6bbfb5588ea`.
+- `core.hooksPath` corrected to `C:/SmartScreen/.githooks` (absolute) before
+  implementation — same recurring defect as Phase 1 and Phase 2.
+
+### Implementation
+
+- Dispatch isolation note: same process deviation as Phase 1 and Phase 2 —
+  APPROVED message used general agent without worktree isolation; implementation
+  ran in the main working tree (checked out to `feat/weather-news-widgets`).
+  `main` was not touched; all commits landed on the feature branch.
+- Implementer completed all 8 tasks, ran `npm test` (115/115 pass, 21 test
+  files), `npm run build` (success, adapter-node), and
+  `npm audit --audit-level=critical` (exit 0).
+- Added `fast-xml-parser@5.0.9` as the only new dependency; no new critical
+  or high advisories.
+- Commit: `493fba1` — `feat(display): weather and news widgets with sidebar
+  layout` (19 files, 764 insertions, 21 deletions).
+
+### Independent Verification
+
+- Spec-compliance pass: clean. 19 files, all Phase 3 scope, no Phase 4+
+  surface touched, `main` untouched.
+- Code-quality pass: no Critical/High/Medium findings. Key verifications:
+  - `parseWeather` is pure; `getWeather(lat, lon)` takes params from caller
+    (mirrors `auth.ts` pattern; no `$env` import inside module).
+  - `Promise.allSettled` in `getNews()` correctly isolates per-source failures;
+    cache guard `items.length > 0` prevents empty partial-failure from
+    overwriting valid cache.
+  - All news titles rendered via `{item.title}` text bindings (never
+    `{@html}`); XSS posture maintained.
+  - `border-inline-start` on sidebar uses RTL-aware CSS logical property.
+- Re-verified on exact tip `493fba1`: 115/115 pass, build clean, audit exit 0.
+- Verdict: `SHIP` on `493fba1`.
+
+### Arc Run Report
+
+- Tests: 115/115 (21 test files) — `npm test` ✓
+- Build: SUCCESS — adapter-node ✓
+- Audit gate: PASSED — `npm audit --audit-level=critical` exits 0 ✓
+- Feature tip: `493fba1` on `feat/weather-news-widgets` ✓
+- Remote push: SKIPPED — no remote configured (pre-existing condition) ✓
+- Smoke: not owed (`arc.smoke.web: disabled`) ✓
+- Residual risks: Calcalist RSS URL dead (D-006 direction preserved; graceful
+  degradation via `Promise.allSettled`); pre-existing SvelteKit/esbuild/Svelte
+  audit advisories (unchanged from before this arc).
+- Result: Arc Phase 3 `SHIP` on `493fba1`. Awaiting merge approval.
+- Gate state: `SHIP` — `STOP BEFORE MERGE`.
+- Next: Emil approves merge → `/arc merge` runs the two-commit ceremony.
+
+## Phase 6 Dry Run — Stage 11 (Arc Merge: Phase 3)
+
+- Emil approved merge: 2026-06-16 ("proceed").
+- Preconditions verified: `SHIP` on `493fba1`; hooks at
+  `C:/SmartScreen/.githooks`; feature tip matched reviewed commit; no remote
+  (pull skipped); no merge conflicts.
+- Merge commit: `99f9f7e` —
+  `Merge: feat(display): weather and news widgets with sidebar layout`
+  (no-ff, `feat/weather-news-widgets` → `main`).
+- Hygiene commit: see `docs(backlog)` commit following this entry.
+- First-parent commit count verified: exactly 2 new commits on main
+  (`99f9f7e` merge + hygiene commit).
+- Remote push: SKIPPED — no remote configured.
+- Gate state: `MERGED`.
+- Arc Phase 3 complete.
