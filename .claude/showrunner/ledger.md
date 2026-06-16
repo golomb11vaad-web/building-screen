@@ -315,3 +315,99 @@
 - Result: Arc Phase 2 plan status `prompt-ready`.
 - Gate state: `RESOLVED`.
 - Next: `/arc run` — dispatch `prompt.md` to a cold, isolated implementer.
+
+## Phase 6 Dry Run — Stage 7 (Arc Run: Phase 2)
+
+- `/arc run` executed against Arc Phase 2 plan
+  (`.claude/showrunner/plans/2026-06-16-admin-message-manager/`).
+- Dispatch record:
+  `arc_id: arc-phase2-admin-message-manager-2026-06-16`,
+  `feature_branch: feat/admin-message-manager`,
+  `base_branch: main`,
+  `base_commit: 41362ea511116245714d1e77d90fb08621bfe20a`,
+  `spec_digest: 78226d176fe4ec34f36c16b0f02250d94936d33c16395d9e42574d091755cb20`.
+
+### Step 0 Describe-Back
+
+- Cold implementer agent performed Step 0 describe-back, verified the prompt,
+  and identified one correction needed: plan files `task-2.md` and `task-10.md`
+  used capitalized weekday values (`['Sunday', 'Monday']`, `day === 'Sunday'`)
+  but the actual `Weekday` type in `types.ts` is ALL LOWERCASE
+  (`'sunday'|'monday'|...|'saturday'`), with `eligibility.ts` applying
+  `.toLowerCase()` on Intl formatter output. Architect verified and issued
+  corrections in the APPROVED message.
+- Approval contract digest authorized:
+  `0e65dc681a80a276eb885bec56ad02c80c0154caf4107335e3c10edd9ce5c189`.
+- `core.hooksPath` defect: same as Phase 1 — relative path resolved to worktree
+  root, not repo root. Architect fixed to `C:/SmartScreen/.githooks` (absolute)
+  before implementation resumed. Recurring lesson: always verify hooksPath is
+  absolute before each Arc Run.
+
+### Implementation
+
+- Dispatch isolation note: same process deviation as Phase 1 — implementation
+  ran in the main working tree (checked out to `feat/admin-message-manager`),
+  not an isolated worktree. `main` was not touched; all commits landed on the
+  feature branch.
+- Test infrastructure adaptations required by SvelteKit+Vitest integration
+  (not in plan, resolved by implementer):
+  - `+page.svelte.test.ts` rejected by SvelteKit's Vite plugin (`+` prefix
+    reserved for routes); renamed to `page.svelte.test.ts` throughout.
+  - `$app/navigation` mock added as `src/__mocks__/$app/navigation.ts` +
+    `vi.hoisted()` factory in display page test to intercept `invalidateAll`.
+  - Display refresh `setInterval` moved from `onMount` to component init level
+    (same pattern as Phase 1's `RotatingBoard`) to work with fake timers.
+  - Upload serving route tests used real filesystem with temp files in
+    `data/uploads/` + `afterEach` cleanup (SvelteKit Vite transforms prevented
+    module mock interception for `+server.ts`).
+  - `parseFields` helper extracted proactively to avoid duplication between
+    `create` and `update` actions.
+- Implementer completed all 13 tasks, ran `npm test` (89/89 pass, 16 test
+  files), `npm run build` (success, adapter-node), and
+  `npm audit --audit-level=critical` (exit 0).
+- Commit: `227ca6e` — `feat(admin): password-protected message manager with
+  image upload and scheduling` (19 files, 1400 insertions, 3 deletions).
+
+### Independent Verification
+
+- Spec-compliance pass: clean. 19 files, all Phase 2 scope, no Phase 3+ surface
+  touched, `main` untouched.
+- Code-quality pass: no Critical/High findings. All user-input message text
+  rendered via `{message.text}` bindings (never `{@html}`), satisfying the XSS
+  posture convention default. Session token is `HMAC-SHA256(ADMIN_PASSWORD,
+  SESSION_SECRET)` via HttpOnly, SameSite=Strict, 8h cookie at path `/admin`.
+  Image serving route guards against path traversal (`..` and `/` rejected with
+  400). All passing.
+- Re-verified on exact tip `227ca6e`: 89/89 pass, build clean, audit gate exit 0.
+- Verdict: `SHIP` on `227ca6e`.
+
+### Arc Run Report
+
+- Tests: 89/89 (16 test files) — `npm test` ✓
+- Build: SUCCESS — adapter-node ✓
+- Audit gate: PASSED — `npm audit --audit-level=critical` exits 0 ✓
+- Feature tip: `227ca6e` on `feat/admin-message-manager` ✓
+- Remote push: SKIPPED — no remote configured (pre-existing condition) ✓
+- Smoke: not owed (`arc.smoke.web: disabled`) ✓
+- Residual risks (carried forward): no git remote; display hardware not
+  available; Phase 3 (weather/news widgets) will introduce third-party API
+  dependencies.
+- Result: Arc Phase 2 `SHIP` on `227ca6e`. Awaiting merge approval.
+- Gate state: `SHIP` — `STOP BEFORE MERGE`.
+- Next: Emil approves merge → `/arc merge` runs the two-commit ceremony.
+
+## Phase 6 Dry Run — Stage 8 (Arc Merge: Phase 2)
+
+- Emil approved merge: 2026-06-16 ("proceed").
+- Preconditions verified: `SHIP` on `227ca6e`; hooks at
+  `C:/SmartScreen/.githooks`; feature tip matched reviewed commit; no remote
+  (pull skipped); no merge conflicts.
+- Merge commit: `8ee49a7` —
+  `Merge: feat(admin): password-protected message manager with image upload and scheduling`
+  (no-ff, `feat/admin-message-manager` → `main`).
+- Hygiene commit: see `docs(backlog)` commit following this entry.
+- First-parent commit count verified: exactly 2 new commits on main
+  (`8ee49a7` merge + hygiene commit).
+- Remote push: SKIPPED — no remote configured.
+- Gate state: `MERGED`.
+- Arc Phase 2 complete.

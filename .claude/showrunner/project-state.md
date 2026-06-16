@@ -2,31 +2,35 @@
 
 > Authority: operational
 > Status: current
-> As of: 2026-06-15
+> As of: 2026-06-16
 > Superseded by: none
 > Other authority sources: `docs/soul.md` (constitution, foundational)
 
 ## Current Phase
 
-**Phase 1 - Core Billboard Loop**
+**Phase 2 - Admin Message Manager + Image Upload**
 
 Outcome:
 
-A single residential lobby has a wall-mounted web display continuously
-showing building messages, weather, and news - with pinned/priority messages
-shown ahead of regular rotation - while building staff manage messages through
-an admin web form, without ever requiring a passerby to interact.
+Building staff authenticate via a shared password and manage messages through
+a full admin web form at `/admin` — creating, editing, deleting, pinning,
+scheduling, and attaching images. The public display at `/` auto-refreshes
+every 3 minutes so changes appear without manual reload. Uploaded images are
+served from `data/uploads/` via a path-traversal-guarded server route. All
+message text is rendered via `{text}` bindings (never `{@html}`).
 
 Passing evidence:
 
-- The display runs unattended through a full day/night cycle, rotating
-  message board, weather, and news content.
-- A staff member adds, edits, pins, and removes a message via the admin form,
-  and the change appears on the display within an agreed refresh window.
-- A message marked pinned/priority displays ahead of, or more prominently
-  than, regular rotation content.
-- All content is legible at a glance from typical lobby walking distance and
-  speed - no interaction required.
+- Staff log in at `/admin/login` with a shared password; session is an
+  HttpOnly, SameSite=Strict, 8-hour cookie.
+- Staff create a message with style (plain / background / photoSlideshow),
+  optional curated background, image upload, and optional schedule (expiry,
+  active days, date range).
+- Staff edit, delete, pin/unpin messages; pinned messages surface first in
+  the admin list.
+- The display page auto-refreshes via `invalidateAll()` every 3 minutes.
+- Uploaded images are served at `/uploads/[filename]` with immutable
+  cache headers and path traversal guard.
 
 ## Completed
 
@@ -49,19 +53,21 @@ Passing evidence:
   `prompt-ready` (`.claude/showrunner/plans/2026-06-16-admin-message-manager/`,
   16 files: `questions.md` RESOLVED, `overview.md`, `task-1.md`..`task-13.md`,
   `prompt.md`), 2026-06-16.
+- Arc Phase 2 implemented and verified: `SHIP` on `227ca6e`
+  (`feat/admin-message-manager`), 2026-06-16. 89/89 tests pass (16 test files),
+  build clean, audit gate passed. Key process deviation: same `core.hooksPath`
+  absolute-path fix required as Phase 1.
+- Arc Phase 2 merged to `main` (merge commit `8ee49a7`), 2026-06-16.
 
 ## In Progress
 
-- Arc Phase 2 ("Admin Message Manager + Image Upload") plan is `prompt-ready`.
-  Plan: `.claude/showrunner/plans/2026-06-16-admin-message-manager/`.
-  arc_id: `arc-phase2-admin-message-manager-2026-06-16`.
-  Base commit: `41362ea`.
-  Feature branch (not yet created): `feat/admin-message-manager`.
+- None.
 
 ## Next
 
-1. Run Arc Phase 2 via `/arc run` — dispatch the implementer prompt, await
-   Step 0 describe-back approval, then implement Tasks 1–13.
+1. Plan Arc Phase 3 (Weather + News Widgets) via `/arc plan` when a Phase 3
+   spec is approved — third-party API provider choice (D-006: Ynet + Calcalist)
+   must be resolved before implementation.
 
 ## Deferred
 
@@ -73,8 +79,8 @@ Passing evidence:
   touch UI - out of scope per constitution Truth #3 ("ambient signage, not a
   kiosk").
 - Specific weather/news data providers - resolve during `/forge spec`.
-- Admin-form authentication mechanism specifics - resolve during
-  `/forge spec` (convention surface).
+- Admin-form authentication mechanism specifics — resolved in Phase 2
+  (HMAC-SHA256 session token, HttpOnly cookie, SameSite=Strict, 8h).
 
 ## Locked Decisions
 
@@ -111,18 +117,18 @@ Passing evidence:
 - Physical display hardware (wall-mounted screen + device running the
   browser) is not yet specified, and is required before Arc can run the
   configured device/runtime smoke checks.
-- Image storage for staff-uploaded message photos (D-011): `/arc plan`
-  resolved the approach as a Convention Default (local filesystem under
-  `data/uploads/`, gitignored, via the `ImageRef` shape defined in Arc
-  Phase 1); the upload/serving implementation itself is Arc Phase 2.
+- Image storage for staff-uploaded message photos (D-011): resolved in Phase 2
+  — `data/uploads/<uuid>.<ext>` (gitignored), served at `/uploads/[filename]`
+  with path traversal guard and immutable cache headers.
 - No git remote is configured (`git remote -v` empty), though
   `repository.remote: origin` and `require_remote_tip_match: true` are set.
-  Flagged at `/arc init`, `/arc plan`, and `/arc run` - must be resolved
-  before `/arc merge` checks remote tips; remote push was skipped this arc.
+  Flagged at `/arc init`, `/arc plan`, and each `/arc run` - must be resolved
+  before `/arc merge` checks remote tips; remote push was skipped in Phase 1
+  and Phase 2.
 - Moderate Svelte SSR XSS advisories (`@sveltejs/kit`) exist in the
-  dependency tree. Phase 1 has no user-generated content so impact is low now;
-  Phase 2 admin form (message creation) must audit all user-input paths before
-  shipping.
+  dependency tree. Phase 2 admin form audited: all message text rendered via
+  `{text}` bindings (never `{@html}`); risk remains low for current scope.
+  Phase 3 must re-audit if any new user-input paths are introduced.
 - `esbuild` high advisory (dev server path only) — do not expose the Vite
   dev server on untrusted networks.
 
