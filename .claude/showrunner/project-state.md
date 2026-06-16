@@ -58,16 +58,24 @@ Passing evidence:
   build clean, audit gate passed. Key process deviation: same `core.hooksPath`
   absolute-path fix required as Phase 1.
 - Arc Phase 2 merged to `main` (merge commit `8ee49a7`), 2026-06-16.
+- Arc Phase 3 ("Weather + News Widgets and Sidebar Integration") plan written
+  and `prompt-ready` (`.claude/showrunner/plans/2026-06-16-weather-news-widgets/`,
+  11 files: `questions.md` EMPTY, `overview.md`, `task-1.md`..`task-8.md`,
+  `prompt.md`), 2026-06-16.
 
 ## In Progress
 
-- None.
+- Arc Phase 3 ("Weather + News Widgets and Sidebar Integration") plan is
+  `prompt-ready`.
+  Plan: `.claude/showrunner/plans/2026-06-16-weather-news-widgets/`.
+  arc_id: `arc-phase3-weather-news-widgets-2026-06-16`.
+  Base commit: `46c5ad8c1e52c7ec5581a232a53e5ce8bae5d491`.
+  Feature branch (not yet created): `feat/weather-news-widgets`.
 
 ## Next
 
-1. Plan Arc Phase 3 (Weather + News Widgets) via `/arc plan` when a Phase 3
-   spec is approved — third-party API provider choice (D-006: Ynet + Calcalist)
-   must be resolved before implementation.
+1. Run Arc Phase 3 via `/arc run` — dispatch the implementer prompt, await
+   Step 0 describe-back approval, then implement Tasks 1–8.
 
 ## Deferred
 

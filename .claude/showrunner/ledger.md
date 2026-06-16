@@ -318,6 +318,7 @@
 
 ## Phase 6 Dry Run — Stage 7 (Arc Run: Phase 2)
 
+
 - `/arc run` executed against Arc Phase 2 plan
   (`.claude/showrunner/plans/2026-06-16-admin-message-manager/`).
 - Dispatch record:
@@ -411,3 +412,55 @@
 - Remote push: SKIPPED — no remote configured.
 - Gate state: `MERGED`.
 - Arc Phase 2 complete.
+
+## Phase 6 Dry Run — Stage 9 (Arc Plan: Phase 3)
+
+- `/arc plan` ran for Arc Phase 3 ("Weather + News Widgets and Sidebar
+  Integration"), consuming the same spec file used for Phases 1 and 2
+  (`.claude/showrunner/specs/phase-1-core-billboard-loop.md`, section 10 step
+  3, whole-file digest
+  `78226d176fe4ec34f36c16b0f02250d94936d33c16395d9e42574d091755cb20`).
+- Plan written to `.claude/showrunner/plans/2026-06-16-weather-news-widgets/`.
+
+### Decision Gate
+
+- No Human Decisions surfaced (gate state: `EMPTY`). All open questions fall
+  on the convention surface.
+- Eight Convention Defaults locked:
+  - Building location: `WEATHER_LAT` / `WEATHER_LON` env vars; `.env.example`
+    defaults to Tel Aviv (32.0853, 34.7818); staff sets real coords at deploy.
+  - `getWeather(lat, lon)` takes params from caller (no `$env` import inside
+    the module) — mirrors `auth.ts` pure-function pattern.
+  - Weather provider: Open-Meteo; implementer verifies URL format + field names
+    during Step 0.
+  - Weather TTL: 30 min; news TTL: 15 min; in-memory module-level caches.
+  - Last-known-good: `getWeather()` → `WeatherData | null`; `getNews()` →
+    `NewsItem[]` (empty on first-fail).
+  - RSS parser: `fast-xml-parser` npm package; URLs verified by implementer.
+  - Max 5 items per source (10 total); Ynet first, then Calcalist.
+  - Sidebar: `28rem` fixed width token; `<main>` first child (right in RTL
+    flow), `<Sidebar>` second (left in RTL flow) — no CSS ordering trick.
+- RTL already set: `app.html` has `lang="he" dir="rtl"` on `<html>`;
+  no `+layout.svelte` change needed.
+- Gate state: `EMPTY`.
+
+### Arc Plan Report
+
+- Feature branch: `feat/weather-news-widgets`.
+- Base commit: `46c5ad8c1e52c7ec5581a232a53e5ce8bae5d491` (HEAD of `main` after
+  Phase 2 hygiene commit).
+- Plan outputs:
+  - `questions.md` — Arc Decision Gate (`EMPTY`).
+  - `overview.md` — outcome, non-goals, verified implementation surface,
+    files-and-responsibilities table (10 new, 7 modified), 8-task table.
+  - `task-1.md` .. `task-8.md` — exact RED/GREEN/REFACTOR steps covering:
+    weather parser (WMO map + fixture tests); weather cache + service; news
+    parser (RSS XML + `fast-xml-parser` + fixture tests); news cache + service
+    (`Promise.allSettled`, last-known-good); WeatherWidget component; NewsWidget
+    component; Sidebar + full page integration (7 files); audit gate + commit.
+  - `prompt.md` — rendered implementer prompt ending
+    `STOP: awaiting describe-back approval`.
+- arc_id: `arc-phase3-weather-news-widgets-2026-06-16`.
+- Result: Arc Phase 3 plan status `prompt-ready`.
+- Gate state: `EMPTY`.
+- Next: `/arc run` — dispatch `prompt.md` to a cold, isolated implementer.
