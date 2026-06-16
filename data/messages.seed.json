@@ -1,0 +1,50 @@
+[
+	{
+		"id": "seed-pinned-plain",
+		"text": "תזכורת: ועד הבית יתקיים ביום שלישי הקרוב בשעה 19:00 בחדר הקהילה.",
+		"style": "plain",
+		"pinned": true,
+		"createdAt": "2026-06-01T08:00:00.000Z",
+		"updatedAt": "2026-06-01T08:00:00.000Z"
+	},
+	{
+		"id": "seed-plain-unpinned",
+		"text": "תודה לכל מי שעזר בסידור הגינה המשותפת בסוף השבוע!",
+		"style": "plain",
+		"pinned": false,
+		"createdAt": "2026-06-02T08:00:00.000Z",
+		"updatedAt": "2026-06-02T08:00:00.000Z"
+	},
+	{
+		"id": "seed-cleaning-schedule",
+		"text": "ניקיון הלובי והמדרגות מתבצע בכל יום שני וחמישי בבוקר.",
+		"style": "background",
+		"images": [{ "id": "img-cleaning", "source": "curated", "ref": "soft-sky" }],
+		"pinned": false,
+		"createdAt": "2026-06-03T08:00:00.000Z",
+		"updatedAt": "2026-06-03T08:00:00.000Z",
+		"activeDays": ["sunday", "monday", "thursday"]
+	},
+	{
+		"id": "seed-weekend-greeting",
+		"text": "שבת שלום וסוף שבוע נעים לכל השכנים!",
+		"style": "photoSlideshow",
+		"images": [
+			{ "id": "img-weekend-1", "source": "curated", "ref": "warm-sand" },
+			{ "id": "img-weekend-2", "source": "curated", "ref": "citrus-light" }
+		],
+		"pinned": false,
+		"createdAt": "2026-06-04T08:00:00.000Z",
+		"updatedAt": "2026-06-04T08:00:00.000Z",
+		"activeDays": ["friday"]
+	},
+	{
+		"id": "seed-expired",
+		"text": "האירוע השנתי של הבניין התקיים בהצלחה - תודה לכולם!",
+		"style": "plain",
+		"pinned": false,
+		"createdAt": "2026-05-01T08:00:00.000Z",
+		"updatedAt": "2026-05-01T08:00:00.000Z",
+		"expiresAt": "2026-05-15T00:00:00.000Z"
+	}
+]
