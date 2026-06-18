@@ -2,31 +2,39 @@
 
 > Authority: operational
 > Status: current
-> As of: 2026-06-16 (Phase 3 merge)
+> As of: 2026-06-18 (Ambient Hearth design merge + Phase 1 completion)
 > Superseded by: none
 > Other authority sources: `docs/soul.md` (constitution, foundational)
 
 ## Current Phase
 
-**Phase 3 - Weather + News Widgets and Sidebar Integration**
+**Phase 1 — Complete**
+
+Phase 1 is demoable end-to-end: three message styles (plain, background,
+slideshow), admin message manager with scheduling, weather and news sidebar,
+Hebrew throughout, and the Ambient Hearth visual design system — all verified
+by the inventor's informal resonance check (D-009).
 
 Outcome:
 
-The public display at `/` shows a persistent left-edge sidebar (RTL) with an
-Open-Meteo weather widget (current temperature, Hebrew WMO condition label,
-daily high/low, "updated at" time) above a news headlines widget (up to 5 Ynet
-+ 5 Calcalist headlines in Hebrew). Both widgets degrade gracefully to
-last-known-good data on fetch failure, and show a neutral Hebrew placeholder
-if nothing has ever loaded. The message board occupies the dominant right-side
-area. The 3-minute `invalidateAll()` refresh also re-fetches weather and news
-on cache miss (30-min and 15-min TTLs respectively).
+The public display at `/` is a dark, warm, typographically considered lobby
+screen using the Ambient Hearth design system (D-013–D-017): deep warm umber
+base (`#19120d`), self-hosted Heebo Hebrew font, warm amber accent (`#ffb77e`),
+400ms fade transitions between messages. A persistent left-edge sidebar (RTL)
+shows weather (64px temperature, Hebrew condition label, high/low, timestamp)
+and up to 5 Ynet news headlines. The message board occupies the dominant
+right-side area with large 84px display-lg Hebrew text. Pinned messages show
+a terracotta dot indicator.
+
+The admin at `/admin` uses the same dark Ambient Hearth palette with
+bottom-border-only inputs, accent submit buttons, and style badges.
 
 Passing evidence:
 
-- A resident glances at the lobby display and sees Hebrew weather (temperature,
-  condition, high/low) and news headlines (Ynet) in the left sidebar alongside
-  the message board — all in Hebrew, RTL, legible at a glance.
-- If weather or news fetch fails, a neutral Hebrew placeholder is shown rather
+- A resident glances at the lobby display and sees a dark, warm screen with
+  large Hebrew text, weather hierarchy, and news headlines — legible at a
+  glance, residential and intentional.
+- If weather or news fetch fails, a warm Hebrew placeholder is shown rather
   than a blank panel or error message.
 - Calcalist RSS URL is currently dead (404); widget shows Ynet-only until a
   valid Calcalist URL is configured (D-006 direction preserved; graceful
@@ -67,6 +75,18 @@ Passing evidence:
   files), build clean, audit gate passed. Key process note: Calcalist RSS URL
   is dead (404); widget degrades gracefully to Ynet-only via `Promise.allSettled`.
 - Arc Phase 3 merged to `main` (merge commit `99f9f7e`), 2026-06-16.
+- Admin edit bug fixed: `afterNavigate` hook in `+page.svelte` repairs form
+  pre-population on client-side navigation (`796352f`), 2026-06-18.
+- `/forge design` completed: designer brief approved, Stitch "Ambient Hearth"
+  delivery reviewed, decisions D-013–D-017 recorded, 2026-06-18.
+- Arc "Ambient Hearth Design" implemented and verified: `SHIP` on `70e3a97`
+  (`feat/ambient-hearth-design`), 2026-06-18. 115/115 tests pass, build clean.
+  13 files restyled: Heebo font, dark token system, display surfaces, admin
+  dark mode. New dependency: `@fontsource/heebo`.
+- Arc "Ambient Hearth Design" merged to `main` (merge commit `1571190`),
+  2026-06-18.
+- Phase 4 gate resolved: resonance check findings (edit bug + visual design)
+  addressed by separate arcs. No additional Phase 4 dispatch needed.
 
 ## In Progress
 
@@ -74,13 +94,13 @@ Passing evidence:
 
 ## Next
 
-1. Arc Phase 4 ("Integration, content polish, and human smoke") — final
-   empty/error-state copy tuning, refresh-cadence tuning, and human smoke
-   check on the actual wall-mounted display hardware once available
-   (`smoke.required_for: [runtime_state, device, external_ops]`).
-2. Resolve Calcalist RSS URL (D-006): find a working Calcalist RSS feed URL
+1. Resolve Calcalist RSS URL (D-006): find a working Calcalist RSS feed URL
    and update `CALCALIST_RSS` in `src/lib/server/news.ts` — no other code
    changes required.
+2. Device smoke on wall-mounted display hardware once available
+   (`smoke.required_for: [runtime_state, device, external_ops]`).
+3. Display type scale verification at actual viewing distance (55"–75" screen,
+   2–10m) — deferred until hardware provisioned.
 
 ## Deferred
 
