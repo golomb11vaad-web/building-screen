@@ -28,7 +28,6 @@
 		inset: 0;
 		background-size: cover;
 		background-position: center;
-		border-radius: 1rem;
-		transition: background var(--motion-slideshow);
+		transition: background var(--motion-fade);
 	}
 </style>

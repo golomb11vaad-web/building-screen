@@ -19,22 +19,17 @@
 	{#if message.style === 'photoSlideshow' && message.images}
 		<Slideshow images={message.images} />
 	{/if}
+	{#if message.style === 'background' || message.style === 'photoSlideshow'}
+		<div class="message-card__scrim"></div>
+	{/if}
 	<p class="message-card__text">{message.text}</p>
 </article>
 
 <style>
 	.message-card {
 		position: relative;
-		padding: var(--space-lg);
-		border-radius: 1rem;
-		background: var(--color-bg-card);
-		border: 1px solid var(--color-border);
+		padding: var(--space-safe-margin);
 		overflow: hidden;
-	}
-
-	.message-card--pinned {
-		border-color: var(--color-pinned-accent);
-		border-width: 3px;
 	}
 
 	.message-card--background {
@@ -42,17 +37,25 @@
 		background-position: center;
 	}
 
-	.message-card__text {
-		position: relative;
-		font-size: var(--font-size-message);
-		line-height: 1.4;
-		margin: 0;
-		text-align: center;
+	.message-card__scrim {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to top,
+			rgba(25, 18, 13, 0.75) 0%,
+			rgba(25, 18, 13, 0.3) 100%
+		);
+		z-index: 1;
 	}
 
-	.message-card--background .message-card__text,
-	.message-card--photoSlideshow .message-card__text {
-		color: var(--color-text);
-		text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+	.message-card__text {
+		position: relative;
+		z-index: 2;
+		font: var(--text-display-lg);
+		letter-spacing: -0.02em;
+		line-height: 100px;
+		margin: 0;
+		text-align: center;
+		color: var(--color-on-surface);
 	}
 </style>

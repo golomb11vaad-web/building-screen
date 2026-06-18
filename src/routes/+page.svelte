@@ -23,6 +23,7 @@
   .display-layout {
     display: flex;
     height: 100vh;
+    background: var(--color-surface);
   }
   .display-main {
     flex: 1;
