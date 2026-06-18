@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { afterNavigate } from '$app/navigation';
   import type { PageData } from './$types';
   import type { Message } from '$lib/types';
   import { CURATED_BACKGROUNDS } from '$lib/curatedBackgrounds';
@@ -7,6 +8,11 @@
 
   let selectedStyle = data.editMessage?.style ?? 'plain';
   let msgText = data.editMessage?.text ?? '';
+
+  afterNavigate(() => {
+    selectedStyle = data.editMessage?.style ?? 'plain';
+    msgText = data.editMessage?.text ?? '';
+  });
 
   $: sortedMessages = [
     ...data.messages.filter((m: Message) => m.pinned),
