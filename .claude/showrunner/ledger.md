@@ -583,4 +583,26 @@
   `afterNavigate`-based sync for `selectedStyle` and `msgText`. Root cause:
   SvelteKit client-side nav doesn't remount the page component, so `let`
   variables stayed stale. 115/115 tests pass.
-- Next: `/arc run` to dispatch implementer.
+- `/arc run` dispatched, 2026-06-18.
+  - Implementer: Sonnet, worktree-isolated, background.
+  - 4 commits on `feat/ambient-hearth-design`:
+    `b414c51` (Heebo + tokens), `ae15e5c` (display surfaces),
+    `24047de` (admin dark theme), `70e3a97` (news scrollbar fix).
+  - 115/115 tests pass. Build succeeds.
+  - Dispatch isolation: worktree branch `worktree-agent-aaa5e40c6e0e6db97`.
+  - Process note: same `core.hooksPath` absolute-path fix required.
+- Independent verification: `SHIP` on `70e3a97`.
+  - Spec-compliance: clean (all changes within approved scope).
+  - Code-quality: clean (zero hardcoded hex in components, all tokens via
+    CSS custom properties).
+  - Human smoke: Emil verified display + admin in browser. One fix requested
+    (news scrollbar), applied and committed.
+
+## Phase 6 Dry Run — Stage 13 (Arc Merge: Ambient Hearth Design)
+
+- Emil approved merge: 2026-06-18 ("merge approved").
+- Merge commit on main. Feature branch `feat/ambient-hearth-design` merged
+  with `--no-ff`.
+- Hygiene commit follows.
+- Remote push: SKIPPED — no remote configured.
+- Gate state: MERGED.
