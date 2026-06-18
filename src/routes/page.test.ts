@@ -5,6 +5,8 @@ vi.mock('$env/static/private', () => ({
   SESSION_SECRET: 'test-secret',
   WEATHER_LAT: '32.0853',
   WEATHER_LON: '34.7818',
+  BUILDING_NAME: 'Test Building',
+  BUILDING_PHONES: 'Phone: 050-000-0000',
 }));
 
 vi.mock('$lib/server/weather', () => ({
@@ -13,6 +15,14 @@ vi.mock('$lib/server/weather', () => ({
 
 vi.mock('$lib/server/news', () => ({
   getNews: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('$lib/server/hebrew', () => ({
+  getHebrewDate: vi.fn().mockResolvedValue(null),
+}));
+
+vi.mock('$lib/server/finance', () => ({
+  getFinanceData: vi.fn().mockResolvedValue([]),
 }));
 
 import { load } from './+page.server';
