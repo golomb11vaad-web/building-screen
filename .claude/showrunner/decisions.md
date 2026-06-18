@@ -465,3 +465,219 @@ only).
 
 **Revisit trigger:** if the admin form's scheduling UI proves too complex for
 staff to use correctly, revisit toward day-of-week only (drop date-range).
+
+## Decision D-013 - Display visual mood: dark / immersive
+
+**Date:** 2026-06-18
+**Status:** approved
+**Decision:** The SmartScreen display surfaces use a dark / immersive visual
+mood — deep warm charcoal or near-black base surfaces with warm off-white
+primary text. Not a cold blue-black and not a light/editorial presentation.
+**Previous value or alternatives:** Light / editorial (warm white backgrounds,
+dark type); mid-tone warm neutrals (sand, stone).
+
+**Rationale:**
+
+- Lobby screens face mixed and variable lighting conditions; dark backgrounds
+  with light type maintain legibility across more conditions than light
+  backgrounds that may wash out under overhead light.
+- The "warm charcoal" register aligns with the constitution's job ("building
+  where people care about the shared space") — residential and considered,
+  not a transit board or TV channel menu.
+
+**Evidence or precedent:**
+
+- Inventor selection during `/forge design` GATE round 1 (Visual Mood question
+  — option B), 2026-06-18.
+
+**Consequences:**
+
+- All display CSS custom property tokens use a dark base surface as their
+  foundation.
+- The admin panel uses light-mode tokens derived from the same token set (D-015).
+- Exact base surface value is deferred to the designer and requires inventor
+  approval before implementation (suggested range: `#1A1612`–`#242018`).
+
+**Affected artifacts:**
+
+- `.claude/showrunner/designer-brief.md` (Brand And Constraints Header)
+- All display-surface component CSS (Message Board, Sidebar, Weather Widget,
+  News Widget)
+
+**Revisit trigger:** display hardware evaluation reveals the dark mood performs
+poorly in the actual lobby's lighting conditions.
+
+## Decision D-014 - Typography: self-hosted Hebrew web font (Heebo or Rubik)
+
+**Date:** 2026-06-18
+**Status:** approved
+**Decision:** SmartScreen uses a self-hosted open Hebrew web font — either
+Heebo or Rubik — served from `static/fonts/`. No external CDN dependency for
+typography. Designer evaluates both at display scale and chooses one; the
+selection returns to the inventor before implementation.
+**Previous value or alternatives:** System font stack only (Noto Sans Hebrew,
+Arial Unicode, etc.); Google Fonts CDN load.
+
+**Rationale:**
+
+- A wall-mounted lobby display that depends on an external font CDN for legible
+  type is an operational risk; self-hosting eliminates this.
+- Heebo and Rubik both have excellent Hebrew coverage, open licenses (SIL OFL),
+  and a warm, approachable weight appropriate for residential ambient signage.
+- Self-hosting adds a one-time build step (download font files, add `@font-face`
+  rules) with no recurring cost.
+
+**Evidence or precedent:**
+
+- Inventor selection during `/forge design` GATE round 1 (Typography Source
+  question — option C), 2026-06-18.
+
+**Consequences:**
+
+- Font files (woff2 at minimum) must be added to `static/fonts/`.
+- `@font-face` declarations added to `src/app.css`.
+- Fallback stack: `system-ui`, `Noto Sans Hebrew` — never a non-Hebrew Latin
+  stack.
+- Designer chooses Heebo or Rubik; that choice returns to inventor before Arc
+  implementation begins.
+
+**Affected artifacts:**
+
+- `static/fonts/` (new directory)
+- `src/app.css` (`@font-face` and `font-family` on `:root`)
+- `.claude/showrunner/designer-brief.md`
+
+**Revisit trigger:** chosen font has a rendering or licensing problem; or
+display hardware cannot load local static files for some reason.
+
+## Decision D-015 - Admin panel: light-mode parity with display
+
+**Date:** 2026-06-18
+**Status:** approved
+**Decision:** The Admin: Message Manager uses the same typeface, design tokens,
+and accent colour as the display surfaces, but in light mode. It is not
+designed to the same visual ambition as the display, but it is unmistakably
+part of the same product — warm off-white base surfaces instead of dark
+charcoal, same token names mapped to their light equivalents.
+**Previous value or alternatives:** Functional-only (no shared token system,
+no visual parity); full parity (same design ambition as the display).
+
+**Rationale:**
+
+- The constitution's emotional job is about residents and visitors, not staff.
+  Investing full design effort in the admin takes effort away from the
+  resident-facing surfaces.
+- Light parity (same tokens, light mode) gives staff a cohesive product
+  feeling without requiring a second full design system.
+
+**Evidence or precedent:**
+
+- Inventor selection during `/forge design` GATE round 1 (Admin Panel
+  question — option B), 2026-06-18.
+
+**Consequences:**
+
+- The designer produces a light-mode token map derived from the display's
+  dark-mode tokens (surface, text, and accent roles inverted/adjusted).
+- Admin-specific component styles reference the same CSS custom properties
+  as display components; `:root` token values differ for the admin route.
+- Specific admin token values are part of the designer brief deliverables.
+
+**Affected artifacts:**
+
+- `.claude/showrunner/designer-brief.md` (Admin surface)
+- `src/routes/admin/` component styles
+- `src/app.css` (token definitions)
+
+**Revisit trigger:** staff feedback indicates the admin is confusing or
+visually mismatched to the display in a way that causes errors.
+
+## Decision D-016 - Message transition: gentle opacity fade (300–500ms)
+
+**Date:** 2026-06-18
+**Status:** approved
+**Decision:** The Message Board transitions between messages using a gentle
+opacity cross-fade of 300–500ms. No slide, no scale, no bounce. No other
+motion on display surfaces.
+**Previous value or alternatives:** Instant cut (no animation); subtle slide
+(message slides in from one side, RTL-aware).
+
+**Rationale:**
+
+- A gentle fade is the most "glanceable, never demanding" option (constitution
+  Truth #3). It keeps the display visually calm and lets content speak without
+  competing motion.
+- An instant cut can feel harsh or broken on a large ambient display.
+- A slide introduces more kinetic energy than an ambient residential display
+  warrants.
+
+**Evidence or precedent:**
+
+- Inventor selection during `/forge design` GATE round 1 (Transition Feel
+  question — option B), 2026-06-18.
+
+**Consequences:**
+
+- Message Board rotation component uses a CSS transition or Svelte transition
+  directive for opacity only.
+- Duration: 300–500ms (exact value to the implementer; recommend 400ms as a
+  midpoint).
+- No other motion anywhere on the display surfaces.
+- No motion on the admin panel.
+
+**Affected artifacts:**
+
+- `src/lib/components/RotatingBoard.svelte` (transition implementation)
+- `.claude/showrunner/designer-brief.md`
+
+**Revisit trigger:** user observation reveals the fade feels too slow or too
+fast at the installed viewing distance and ambient lighting conditions.
+
+## Decision D-017 - Admin panel: dark mode (reversal of D-015 light mode)
+
+**Date:** 2026-06-18
+**Status:** approved (supersedes D-015)
+**Decision:** The Admin: Message Manager uses the same dark-mode palette as the
+display surfaces — same base surface (`#19120d`), same accent (`#ffb77e`), same
+on-surface text (`#eee0d7`). The admin is visually cohesive with the display
+rather than using a separate light-mode token set. It still uses the same
+typeface and design tokens as the display (retaining the "parity" principle
+from D-015, but in dark mode).
+**Previous value or alternatives:** Light-mode parity (D-015: warm off-white
+base, same tokens mapped to light equivalents).
+
+**Rationale:**
+
+- The Stitch designer delivery ("Ambient Hearth") produced the admin in full
+  dark mode matching the display, and the result is cohesive and premium —
+  the admin feels like part of the same product without a jarring mode switch.
+- A single dark token set is simpler to implement (no light-mode overrides
+  per route) and eliminates the risk of inconsistent token mapping between
+  two modes.
+
+**Evidence or precedent:**
+
+- Stitch design delivery (`stitch_smartscreen_lobby_ambient_signage/
+  smartscreen_admin_manager/`), reviewed 2026-06-18.
+- Inventor approval of dark admin over light, 2026-06-18.
+- D-015 is superseded by this entry; the original evidence (GATE round 1
+  choice of "light parity") is overridden by new evidence (delivered design
+  + inventor review of the actual rendered result).
+
+**Consequences:**
+
+- One token set for all surfaces (display and admin). No route-specific
+  `:root` overrides needed.
+- Admin input fields use bottom-border-only styling on a dark background
+  (per Stitch design) rather than boxed light-mode inputs.
+- Removes the need for a light-mode token derivation deliverable from the
+  designer brief.
+
+**Affected artifacts:**
+
+- `.claude/showrunner/designer-brief.md` (Admin surface — updated)
+- `src/routes/admin/` component styles
+- `src/app.css` (single unified token set)
+
+**Revisit trigger:** staff feedback that the dark admin is hard to use in
+bright office lighting conditions.

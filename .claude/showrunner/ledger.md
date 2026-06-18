@@ -555,3 +555,32 @@
 - Remote push: SKIPPED — no remote configured.
 - Gate state: `MERGED`.
 - Arc Phase 3 complete.
+
+## Phase 6 Dry Run — Stage 12 (Forge Design + Arc Plan: Ambient Hearth)
+
+- Resonance check (D-009) performed by Emil, 2026-06-18. Two findings:
+  1. Admin edit not working (bug — fixed inline with `afterNavigate` hook).
+  2. Visual design "very not beautiful" — `/forge design` requested.
+- `/forge design` completed, 2026-06-18.
+  - GATE: 5 brand/creative questions (visual mood, typography, admin mode,
+    transitions, accent). All resolved.
+  - Decisions recorded: D-013 (dark mood), D-014 (Heebo self-hosted),
+    D-015 (admin light parity), D-016 (400ms fade).
+  - Brief written: `.claude/showrunner/designer-brief.md` (inventor-approved).
+- Stitch design delivery ("Ambient Hearth") reviewed, 2026-06-18.
+  - Theme: dark warm umber base `#19120d`, Heebo font, amber accent `#ffb77e`,
+    terracotta container `#ca7f3f`, M3-style token set.
+  - Screens: display (plain text, empty state), admin manager.
+  - Admin delivered in dark mode (diverges from D-015 light call).
+- D-017 recorded: admin dark mode (supersedes D-015). Emil approved.
+- Designer brief updated with Stitch resolved tokens.
+- `/arc plan` completed, 2026-06-18.
+  - Plan: `.claude/showrunner/plans/2026-06-18-ambient-hearth-design/`
+  - 10 tasks across 3 phases (foundation, display, admin).
+  - Gate: RESOLVED (no human decisions). Status: `prompt-ready`.
+  - Feature branch: `feat/ambient-hearth-design`
+- Admin edit bug fix: `src/routes/admin/+page.svelte` — changed `let` to
+  `afterNavigate`-based sync for `selectedStyle` and `msgText`. Root cause:
+  SvelteKit client-side nav doesn't remount the page component, so `let`
+  variables stayed stale. 115/115 tests pass.
+- Next: `/arc run` to dispatch implementer.
