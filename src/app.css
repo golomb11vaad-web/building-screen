@@ -1,24 +1,43 @@
+@import '@fontsource/heebo/300.css';
+@import '@fontsource/heebo/400.css';
+@import '@fontsource/heebo/500.css';
+@import '@fontsource/heebo/700.css';
+
 :root {
-	--color-bg: #faf8f5;
-	--color-bg-card: #ffffff;
-	--color-text: #2b2b28;
-	--color-text-muted: #6b6660;
-	--color-pinned-accent: #c98a3c;
-	--color-border: #e4ddd2;
+	/* Ambient Hearth — Stitch delivery */
+	--color-surface: #19120d;
+	--color-surface-container: #251e19;
+	--color-surface-container-low: #211a15;
+	--color-surface-container-high: #302823;
+	--color-surface-container-highest: #3b332e;
+	--color-on-surface: #eee0d7;
+	--color-on-surface-variant: #d8c2b4;
+	--color-primary: #ffb77e;
+	--color-primary-container: #ca7f3f;
+	--color-on-primary: #4e2600;
+	--color-outline: #a08d80;
+	--color-outline-variant: #534439;
+	--color-error: #ffb4ab;
+	--color-on-error: #690005;
 
-	--space-xs: 0.5rem;
-	--space-sm: 1rem;
-	--space-md: 1.5rem;
-	--space-lg: 2.5rem;
-	--space-xl: 4rem;
+	--font-family: 'Heebo', system-ui, sans-serif;
 
-	--font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-	--font-size-base: 1.5rem;
-	--font-size-message: 3rem;
-	--font-size-heading: 2rem;
+	--text-display-lg: 300 84px/100px 'Heebo', sans-serif;
+	--text-display-md: 400 64px/72px 'Heebo', sans-serif;
+	--text-headline-lg: 500 48px/56px 'Heebo', sans-serif;
+	--text-headline-md: 500 32px/40px 'Heebo', sans-serif;
+	--text-body-lg: 400 24px/36px 'Heebo', sans-serif;
+	--text-body-md: 400 20px/30px 'Heebo', sans-serif;
+	--text-label-caps: 700 16px/24px 'Heebo', sans-serif;
 
-	--motion-fade: 600ms ease;
-	--motion-slideshow: 1200ms ease;
+	--space-safe-margin: 80px;
+	--space-gutter: 40px;
+	--space-stack-sm: 12px;
+	--space-stack-md: 24px;
+	--space-stack-lg: 48px;
+	--space-section-gap: 120px;
+
+	--motion-fade: 400ms linear;
 
 	--sidebar-width: 28rem;
 }
@@ -32,8 +51,9 @@ body {
 	margin: 0;
 	padding: 0;
 	height: 100%;
-	background: var(--color-bg);
-	color: var(--color-text);
+	background: var(--color-surface);
+	color: var(--color-on-surface);
 	font-family: var(--font-family);
-	font-size: var(--font-size-base);
+	font-size: 20px;
+	overflow: hidden;
 }

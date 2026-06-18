@@ -23,6 +23,7 @@
 		"vitest": "^3.2.6"
 	},
 	"dependencies": {
+		"@fontsource/heebo": "^5.2.8",
 		"fast-xml-parser": "^5.9.0"
 	}
 }
