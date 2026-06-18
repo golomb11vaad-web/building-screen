@@ -3,6 +3,7 @@
   import { invalidateAll } from '$app/navigation';
   import RotatingBoard from '$lib/components/RotatingBoard.svelte';
   import Sidebar from '$lib/components/Sidebar.svelte';
+  import NewsTicker from '$lib/components/NewsTicker.svelte';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -12,18 +13,34 @@
   onDestroy(() => { clearInterval(refreshTimer); });
 </script>
 
-<div class="display-layout">
-  <main class="display-main">
-    <RotatingBoard messages={data.rotation} />
-  </main>
-  <Sidebar weather={data.weather} news={data.news} />
+<div class="display-wrapper">
+  <div class="display-layout">
+    <main class="display-main">
+      <RotatingBoard messages={data.rotation} />
+    </main>
+    <Sidebar
+      weather={data.weather}
+      news={data.news}
+      hebrewDate={data.hebrewDate}
+      finance={data.finance}
+      buildingName={data.buildingName}
+      buildingPhones={data.buildingPhones}
+    />
+  </div>
+  <NewsTicker items={data.news} />
 </div>
 
 <style>
-  .display-layout {
+  .display-wrapper {
     display: flex;
+    flex-direction: column;
     height: 100vh;
     background: var(--color-surface);
+  }
+  .display-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
   }
   .display-main {
     flex: 1;

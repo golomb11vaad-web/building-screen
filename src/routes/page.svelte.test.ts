@@ -24,16 +24,26 @@ const msg: Message = {
   updatedAt: '2026-01-01T00:00:00.000Z'
 };
 
+const pageData = {
+  rotation: [msg],
+  weather: null,
+  news: [],
+  hebrewDate: null,
+  finance: [],
+  buildingName: '',
+  buildingPhones: [],
+};
+
 describe('Display page refresh timer', () => {
   it('renders without error', () => {
     expect(() =>
-      render(DisplayPage, { props: { data: { rotation: [msg], weather: null, news: [] } } })
+      render(DisplayPage, { props: { data: pageData } })
     ).not.toThrow();
   });
 
   it('calls invalidateAll after the refresh interval', async () => {
     vi.useFakeTimers();
-    render(DisplayPage, { props: { data: { rotation: [msg], weather: null, news: [] } } });
+    render(DisplayPage, { props: { data: pageData } });
     vi.advanceTimersByTime(3 * 60 * 1000);
     expect(mockInvalidateAll).toHaveBeenCalledTimes(1);
     vi.useRealTimers();

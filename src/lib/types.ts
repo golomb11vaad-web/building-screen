@@ -62,3 +62,14 @@ export interface NewsItem {
 	link: string;
 	publishedAt: string;
 }
+
+export interface HebrewDateData {
+	hebrew: string;
+	parasha: string | null;
+}
+
+export interface FinanceItem {
+	label: string;
+	value: string;
+	change: string;
+}
