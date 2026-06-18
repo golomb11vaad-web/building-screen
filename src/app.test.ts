@@ -10,9 +10,9 @@ describe('RTL/Hebrew shell and design tokens', () => {
 
 	it('defines the base design tokens', () => {
 		const css = readFileSync('src/app.css', 'utf-8');
-		expect(css).toContain('--color-bg');
-		expect(css).toContain('--color-pinned-accent');
-		expect(css).toContain('--font-size-message');
-		expect(css).toContain('--motion-slideshow');
+		expect(css).toContain('--color-surface');
+		expect(css).toContain('--color-primary');
+		expect(css).toContain('--text-display-lg');
+		expect(css).toContain('--motion-fade');
 	});
 });

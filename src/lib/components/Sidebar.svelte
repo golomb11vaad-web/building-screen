@@ -17,8 +17,10 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--color-bg-card);
-    border-inline-start: 1px solid var(--color-border);
+    gap: var(--space-section-gap);
+    background: var(--color-surface-container);
+    border-inline-start: 1px solid var(--color-outline-variant);
+    padding: var(--space-stack-lg) var(--space-safe-margin);
     overflow: hidden;
   }
 </style>

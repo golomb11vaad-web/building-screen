@@ -29,46 +29,61 @@
   .login-page {
     max-width: 22rem;
     margin: 6rem auto;
-    padding: var(--space-lg);
+    padding: var(--space-stack-lg);
+    color: var(--color-on-surface);
   }
 
   .login-page__title {
-    margin-block-end: var(--space-lg);
-    font-size: 1.5rem;
+    font: var(--text-headline-lg);
+    color: var(--color-primary);
+    margin-block-end: var(--space-stack-lg);
   }
 
   .login-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-stack-md);
   }
 
   .login-form__error {
-    color: #b00020;
+    color: var(--color-error);
     font-size: 0.9rem;
     margin: 0;
   }
 
   .login-form__label {
-    font-weight: 600;
+    font: var(--text-label-caps);
+    color: var(--color-on-surface-variant);
+    letter-spacing: 0.05em;
   }
 
   .login-form__input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.4rem;
-    font-size: 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-outline);
+    color: var(--color-on-surface);
+    font: var(--text-body-lg);
+    padding: 0.75rem 0;
+    border-radius: 0;
     width: 100%;
+    font-family: inherit;
+  }
+
+  .login-form__input:focus {
+    border-color: var(--color-primary);
+    outline: none;
   }
 
   .login-form__submit {
     padding: 0.6rem 1.2rem;
-    background: var(--color-pinned-accent);
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     border: none;
-    border-radius: 0.4rem;
+    border-radius: 0.25rem;
     font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
     align-self: flex-start;
+    font-family: inherit;
   }
 </style>

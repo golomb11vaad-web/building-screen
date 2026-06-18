@@ -25,45 +25,50 @@
 
 <style>
   .news-widget {
-    padding: var(--space-sm);
+    padding: 0;
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .news-heading {
-    font-size: 1rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
+    font: var(--text-label-caps);
+    color: var(--color-primary-container);
     letter-spacing: 0.05em;
-    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    margin: 0 0 var(--space-stack-md);
   }
 
   .news-list {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-md);
   }
 
   .news-item {
-    margin-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-outline-variant);
+    padding-bottom: var(--space-stack-md);
     line-height: 1.4;
   }
 
   .news-source {
     display: block;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    margin-bottom: 0.2rem;
+    font: var(--text-label-caps);
+    color: var(--color-on-surface-variant);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-stack-sm);
   }
 
   .news-title {
-    font-size: 1rem;
-    color: var(--color-text);
+    font: var(--text-body-lg);
+    color: var(--color-on-surface);
   }
 
   .news-placeholder {
-    font-size: 1rem;
-    color: var(--color-text-muted);
+    font: var(--text-body-lg);
+    color: var(--color-on-surface-variant);
     margin: 0;
   }
 </style>
