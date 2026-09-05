@@ -27,12 +27,6 @@
 	{:else}
 		{#key current}
 			<div class="rotating-board__slide" transition:fade={{ duration: 400 }}>
-				{#if messages[current].pinned}
-					<div class="rotating-board__pinned-indicator">
-						<span class="rotating-board__pinned-dot"></span>
-						<span class="rotating-board__pinned-label">הודעה חשובה</span>
-					</div>
-				{/if}
 				<MessageCard message={messages[current]} />
 			</div>
 		{/key}
@@ -45,8 +39,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 100vh;
-		padding: var(--space-safe-margin);
+		height: 100%;
+		min-height: 0;
+		padding: clamp(28px, 5vw, var(--space-safe-margin));
 	}
 
 	.rotating-board__slide {
@@ -55,6 +50,8 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
+		height: 100%;
+		min-height: 0;
 	}
 
 	.rotating-board__empty {
@@ -62,25 +59,11 @@
 		color: var(--color-on-surface);
 		text-align: center;
 		letter-spacing: -0.02em;
+		background: var(--color-surface-container-high);
+		backdrop-filter: var(--blur-surface);
+		padding: 1em 1.3em;
+		border-radius: 32px;
+		box-shadow: var(--shadow-soft);
 	}
 
-	.rotating-board__pinned-indicator {
-		display: flex;
-		align-items: center;
-		gap: var(--space-stack-sm);
-		margin-bottom: var(--space-stack-md);
-	}
-
-	.rotating-board__pinned-dot {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: var(--color-primary-container);
-	}
-
-	.rotating-board__pinned-label {
-		font: var(--text-label-caps);
-		color: var(--color-primary);
-		letter-spacing: 0.05em;
-	}
 </style>

@@ -3,7 +3,7 @@ import type { NewsItem } from '$lib/types';
 
 const parser = new XMLParser({ ignoreAttributes: true });
 
-export function parseRssItems(xml: string, source: 'Ynet' | 'Calcalist'): NewsItem[] {
+export function parseRssItems(xml: string, source: NewsItem['source']): NewsItem[] {
   try {
     const result = parser.parse(xml);
     const rawItems = result?.rss?.channel?.item;
@@ -25,14 +25,14 @@ export function parseRssItems(xml: string, source: 'Ynet' | 'Calcalist'): NewsIt
 }
 
 const YNET_RSS = 'https://www.ynet.co.il/Integration/StoryRss1854.xml';
-const CALCALIST_RSS = 'https://www.calcalist.co.il/Rss/0,7340,L-8,00.xml';
-const NEWS_TTL_MS = 15 * 60 * 1000;
+const GLOBES_MARKETS_RSS = 'https://www.globes.co.il/webservice/rss/rssfeeder.asmx/FeederNode?iID=585';
+const NEWS_TTL_MS = 60 * 60 * 1000;
 const MAX_PER_SOURCE = 5;
 
 type NewsCache = { data: NewsItem[]; fetchedAt: number };
 let newsCache: NewsCache | null = null;
 
-async function fetchSource(url: string, source: 'Ynet' | 'Calcalist'): Promise<NewsItem[]> {
+async function fetchSource(url: string, source: NewsItem['source']): Promise<NewsItem[]> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`RSS HTTP ${res.status}`);
   const xml = await res.text();
@@ -42,13 +42,13 @@ async function fetchSource(url: string, source: 'Ynet' | 'Calcalist'): Promise<N
 export async function getNews(): Promise<NewsItem[]> {
   const now = Date.now();
   if (newsCache && now - newsCache.fetchedAt < NEWS_TTL_MS) return newsCache.data;
-  const [ynet, calcalist] = await Promise.allSettled([
+  const [ynet, globes] = await Promise.allSettled([
     fetchSource(YNET_RSS, 'Ynet'),
-    fetchSource(CALCALIST_RSS, 'Calcalist'),
+    fetchSource(GLOBES_MARKETS_RSS, 'Globes'),
   ]);
   const items = [
     ...(ynet.status === 'fulfilled' ? ynet.value : []),
-    ...(calcalist.status === 'fulfilled' ? calcalist.value : []),
+    ...(globes.status === 'fulfilled' ? globes.value : []),
   ];
   if (items.length > 0) {
     newsCache = { data: items, fetchedAt: now };

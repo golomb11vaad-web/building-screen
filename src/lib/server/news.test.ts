@@ -34,7 +34,7 @@ describe('parseRssItems', () => {
 
   it('returns an empty array for a channel with no items', () => {
     const emptyXml = `<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>`;
-    expect(parseRssItems(emptyXml, 'Calcalist')).toEqual([]);
+    expect(parseRssItems(emptyXml, 'Globes')).toEqual([]);
   });
 
   it('returns an empty array for malformed XML', () => {
@@ -54,9 +54,9 @@ const YNET_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <item><title>ynet חדשה</title><link>https://www.ynet.co.il/a</link><pubDate>Mon, 16 Jun 2026 10:00:00 +0300</pubDate></item>
 </channel></rss>`;
 
-const CALCALIST_XML = `<?xml version="1.0" encoding="UTF-8"?>
+const GLOBES_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"><channel>
-  <item><title>כלכליסט חדשה</title><link>https://www.calcalist.co.il/b</link><pubDate>Mon, 16 Jun 2026 09:00:00 +0300</pubDate></item>
+  <item><title>גלובס חדשה</title><link>https://www.globes.co.il/b</link><pubDate>Mon, 16 Jun 2026 09:00:00 +0300</pubDate></item>
 </channel></rss>`;
 
 describe('getNews', () => {
@@ -68,21 +68,21 @@ describe('getNews', () => {
   it('returns items from both sources on success', async () => {
     mockFetch
       .mockResolvedValueOnce({ ok: true, text: async () => YNET_XML })
-      .mockResolvedValueOnce({ ok: true, text: async () => CALCALIST_XML });
+      .mockResolvedValueOnce({ ok: true, text: async () => GLOBES_XML });
     const { getNews } = await import('./news');
     const items = await getNews();
     expect(items.some((i) => i.source === 'Ynet')).toBe(true);
-    expect(items.some((i) => i.source === 'Calcalist')).toBe(true);
+    expect(items.some((i) => i.source === 'Globes')).toBe(true);
   });
 
   it('returns partial results when one source fails', async () => {
     mockFetch
       .mockResolvedValueOnce({ ok: true, text: async () => YNET_XML })
-      .mockRejectedValueOnce(new Error('Calcalist down'));
+      .mockRejectedValueOnce(new Error('Globes down'));
     const { getNews } = await import('./news');
     const items = await getNews();
     expect(items.some((i) => i.source === 'Ynet')).toBe(true);
-    expect(items.every((i) => i.source !== 'Calcalist')).toBe(true);
+    expect(items.every((i) => i.source !== 'Globes')).toBe(true);
   });
 
   it('returns empty array when all sources fail and cache is empty', async () => {
@@ -94,7 +94,7 @@ describe('getNews', () => {
   it('returns last-known-good when all sources fail after a successful fetch', async () => {
     mockFetch
       .mockResolvedValueOnce({ ok: true, text: async () => YNET_XML })
-      .mockResolvedValueOnce({ ok: true, text: async () => CALCALIST_XML })
+      .mockResolvedValueOnce({ ok: true, text: async () => GLOBES_XML })
       .mockRejectedValue(new Error('all down'));
     const { getNews } = await import('./news');
     const first = await getNews();

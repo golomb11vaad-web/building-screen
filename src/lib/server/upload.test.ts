@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { validateUpload, generateFilename, processUpload } from './upload';
+import { validateAudioUpload, validateUpload, generateFilename, processUpload } from './upload';
 
 const makeFile = (name: string, type: string, size: number): File => {
   const content = new Uint8Array(size);
@@ -33,6 +33,16 @@ describe('validateUpload', () => {
   it('returns error when file exceeds 10 MB', () => {
     const tooBig = makeFile('big.jpg', 'image/jpeg', 11 * 1024 * 1024);
     expect(validateUpload(tooBig)).toBeTruthy();
+  });
+});
+
+describe('validateAudioUpload', () => {
+  it('accepts an MP3 file', () => {
+    expect(validateAudioUpload(makeFile('track.mp3', 'audio/mpeg', 100))).toBeNull();
+  });
+
+  it('rejects non-MP3 audio files', () => {
+    expect(validateAudioUpload(makeFile('track.wav', 'audio/wav', 100))).toBeTruthy();
   });
 });
 

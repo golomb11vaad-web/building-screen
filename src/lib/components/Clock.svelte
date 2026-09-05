@@ -42,14 +42,14 @@
   }
 
   .clock-time {
-    font: var(--text-display-md);
+    font: 400 clamp(44px, 4.1vw, 64px)/1 'Heebo', sans-serif;
     color: var(--color-on-surface);
     margin: 0;
   }
 
   .clock-date {
-    font: var(--text-body-md);
+    font: 400 clamp(16px, 1.35vw, 20px)/1.35 'Heebo', sans-serif;
     color: var(--color-on-surface-variant);
-    margin: var(--space-stack-sm) 0 0;
+    margin: clamp(4px, 0.7vh, 10px) 0 0;
   }
 </style>

@@ -1,6 +1,11 @@
 node_modules/
 .svelte-kit/
+.wrangler/
 build/
 data/uploads/
 data/messages.json
+data/ambient-backgrounds.json
+data/building-photo.json
 .env
+local-preview*.log
+.claude/

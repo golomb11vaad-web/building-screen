@@ -44,7 +44,7 @@ describe('Display page refresh timer', () => {
   it('calls invalidateAll after the refresh interval', async () => {
     vi.useFakeTimers();
     render(DisplayPage, { props: { data: pageData } });
-    vi.advanceTimersByTime(3 * 60 * 1000);
+    vi.advanceTimersByTime(60 * 60 * 1000);
     expect(mockInvalidateAll).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
   });

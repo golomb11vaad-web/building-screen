@@ -1,6 +1,6 @@
 import type { FinanceItem } from '$lib/types';
 
-const FINANCE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const FINANCE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 type CacheEntry = { data: FinanceItem[]; fetchedAt: number; rates: Record<string, number> };
 let cache: CacheEntry | null = null;

@@ -60,11 +60,11 @@
   }
 
   .change-up {
-    color: #66bb6a;
+    color: var(--color-positive);
   }
 
   .change-down {
-    color: #ef5350;
+    color: var(--color-negative);
   }
 
   .change-neutral {

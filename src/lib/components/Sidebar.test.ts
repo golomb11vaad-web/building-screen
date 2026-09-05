@@ -8,8 +8,8 @@ describe('Sidebar', () => {
     expect(getByText('מזג האוויר אינו זמין')).toBeTruthy();
   });
 
-  it('renders the news placeholder when news is empty', () => {
-    const { getByText } = render(Sidebar, { props: { weather: null, news: [] } });
-    expect(getByText('חדשות אינן זמינות')).toBeTruthy();
+  it('renders the weather placeholder when weather is unavailable', () => {
+    const { getByText } = render(Sidebar, { props: { weather: null } });
+    expect(getByText('מזג האוויר אינו זמין')).toBeTruthy();
   });
 });

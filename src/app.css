@@ -4,21 +4,25 @@
 @import '@fontsource/heebo/700.css';
 
 :root {
-	/* Ambient Hearth — Stitch delivery */
-	--color-surface: #19120d;
-	--color-surface-container: #251e19;
-	--color-surface-container-low: #211a15;
-	--color-surface-container-high: #302823;
-	--color-surface-container-highest: #3b332e;
-	--color-on-surface: #eee0d7;
-	--color-on-surface-variant: #d8c2b4;
-	--color-primary: #ffb77e;
-	--color-primary-container: #ca7f3f;
-	--color-on-primary: #4e2600;
-	--color-outline: #a08d80;
-	--color-outline-variant: #534439;
-	--color-error: #ffb4ab;
-	--color-on-error: #690005;
+	/* Luminous Garden — a bright, photographic lobby display */
+	--color-surface: #eff7f4;
+	--color-surface-container: rgba(250, 254, 252, 0.78);
+	--color-surface-container-low: rgba(247, 252, 250, 0.64);
+	--color-surface-container-high: rgba(255, 255, 255, 0.9);
+	--color-surface-container-highest: #d8ebe6;
+	--color-on-surface: #143645;
+	--color-on-surface-variant: #4d6972;
+	--color-primary: #d4643a;
+	--color-primary-container: #b94d2b;
+	--color-on-primary: #ffffff;
+	--color-outline: rgba(20, 54, 69, 0.28);
+	--color-outline-variant: rgba(20, 54, 69, 0.16);
+	--color-error: #b3261e;
+	--color-on-error: #ffffff;
+	--color-positive: #18734f;
+	--color-negative: #b23b48;
+	--shadow-soft: 0 20px 60px rgba(20, 54, 69, 0.16);
+	--blur-surface: blur(20px);
 
 	--font-family: 'Heebo', system-ui, sans-serif;
 
@@ -46,8 +50,8 @@
 	box-sizing: border-box;
 }
 
-html,
-body {
+	html,
+	body {
 	margin: 0;
 	padding: 0;
 	height: 100%;

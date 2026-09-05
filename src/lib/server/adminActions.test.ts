@@ -4,6 +4,8 @@ import {
   applyUpdate,
   applyDelete,
   applyTogglePin,
+  normalizeLegacyRichText,
+  sanitizeRichText,
   validateMessageFields,
   type MessageFields
 } from './adminActions';
@@ -21,6 +23,7 @@ const base: Message = {
 const fields: MessageFields = {
   text: 'הודעה חדשה',
   style: 'plain',
+  textSize: 'normal',
   pinned: false
 };
 
@@ -32,6 +35,7 @@ describe('applyCreate', () => {
     expect(result[0].id).toBeTruthy();
     expect(result[0].createdAt).toBeTruthy();
     expect(result[0].updatedAt).toBeTruthy();
+    expect(result[0].textSize).toBe('normal');
   });
 
   it('does not mutate the original array', () => {
@@ -123,5 +127,25 @@ describe('validateMessageFields', () => {
 
   it('returns null when only activeFrom is set', () => {
     expect(validateMessageFields({ ...fields, activeFrom: '2026-01-01' })).toBeNull();
+  });
+});
+
+describe('sanitizeRichText', () => {
+  it('converts contenteditable block elements into line breaks', () => {
+    expect(sanitizeRichText('שורה ראשונה<div>שורה שנייה</div>')).toBe('שורה ראשונה<br>שורה שנייה');
+    expect(sanitizeRichText('&lt;div&gt;שורה&lt;/div&gt;')).toBe('שורה');
+  });
+
+  it('updates the selected text size', () => {
+    const result = applyUpdate([base], 'msg-1', { ...fields, textSize: 'small' });
+    expect(result[0].textSize).toBe('small');
+  });
+
+  it('repairs escaped block tags saved by the earlier editor', () => {
+    expect(normalizeLegacyRichText('ראשונה&lt;div&gt;שנייה&lt;/div&gt;')).toBe('ראשונה<br>שנייה');
+  });
+
+  it('converts non-breaking-space entities into normal spaces', () => {
+    expect(normalizeLegacyRichText('שלום&nbsp;עולם &amp;nbsp;שוב')).toBe('שלום עולם  שוב');
   });
 });

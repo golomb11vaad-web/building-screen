@@ -1,9 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import type { Message, MessageStyle, ImageRef, Weekday } from '../types';
+import type { Message, MessageStyle, MessageTextSize, ImageRef, Weekday } from '../types';
 
 export interface MessageFields {
   text: string;
   style: MessageStyle;
+  textSize: MessageTextSize;
   pinned: boolean;
   expiresAt?: string;
   activeDays?: Weekday[];
@@ -12,12 +13,43 @@ export interface MessageFields {
   images?: ImageRef[];
 }
 
+/** Repair the escaped block tags produced by the first rich-editor release. */
+export function normalizeLegacyRichText(value: string): string {
+  return value
+    .replace(/&(?:amp;)?nbsp;/gi, ' ')
+    .replace(/&lt;(\/?)(?:div|p)(?:\s[^&]*?)?&gt;/gi, (_match, closing) => closing ? '' : '<br>')
+    .replace(/^<br>/, '');
+}
+
+/** Keep a small, display-safe rich-text subset from the administrator editor. */
+export function sanitizeRichText(value: string): string {
+  // Browsers use DIV/P elements for Enter in a contenteditable field. Flatten
+  // those block wrappers into line breaks before allowing the rich-text subset.
+  const normalized = normalizeLegacyRichText(value)
+    .replace(/<\/?(?:div|p)(?:\s[^>]*)?>/gi, (match) => match.startsWith('</') ? '' : '<br>')
+    .replace(/^<br>/, '');
+  const escaped = normalized.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const restored = escaped.replace(/&lt;(\/?(?:b|strong|i|em|u|br|ul|ol|li|a)(?:\s[^&]*?)?)&gt;/gi, (_match, tag) => {
+    const closing = tag.startsWith('/');
+    const name = tag.match(/^\/?([a-z]+)/i)?.[1]?.toLowerCase();
+    if (!name) return '';
+    if (closing) return `</${name}>`;
+    if (name !== 'a') return `<${name}>`;
+    const href = tag.match(/href\s*=\s*["']([^"']+)["']/i)?.[1];
+    return href && /^(https?:\/\/|mailto:)/i.test(href)
+      ? `<a href="${href}" target="_blank" rel="noreferrer">`
+      : '<a>';
+  });
+  return restored.replace(/\r?\n/g, '<br>');
+}
+
 export function applyCreate(messages: Message[], fields: MessageFields): Message[] {
   const now = new Date().toISOString();
   const msg: Message = {
     id: randomUUID(),
     text: fields.text,
     style: fields.style,
+    textSize: fields.textSize,
     pinned: fields.pinned,
     createdAt: now,
     updatedAt: now,
@@ -37,6 +69,7 @@ export function applyUpdate(messages: Message[], id: string, fields: MessageFiel
       ...m,
       text: fields.text,
       style: fields.style,
+      textSize: fields.textSize,
       pinned: fields.pinned,
       updatedAt: new Date().toISOString(),
       expiresAt: fields.expiresAt,
@@ -59,7 +92,7 @@ export function applyTogglePin(messages: Message[], id: string): Message[] {
 }
 
 export function validateMessageFields(fields: MessageFields): string | null {
-  if (!fields.text.trim()) return 'טקסט ההודעה הוא שדה חובה';
+  if (!fields.text.replace(/<[^>]*>/g, '').trim()) return 'טקסט ההודעה הוא שדה חובה';
   if (fields.activeFrom && fields.activeUntil && fields.activeFrom > fields.activeUntil) {
     return 'תאריך התחלה חייב להיות לפני תאריך סיום';
   }

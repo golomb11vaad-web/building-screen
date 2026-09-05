@@ -22,9 +22,9 @@
   }
 
   .building-name {
-    font: var(--text-headline-md);
+    font: 700 clamp(22px, 2vw, 32px)/1.15 'Heebo', sans-serif;
     color: var(--color-primary);
-    margin: 0 0 var(--space-stack-md);
+    margin: 0 0 clamp(6px, 1vh, 14px);
   }
 
   .building-phones {
@@ -34,9 +34,9 @@
   }
 
   .building-phone {
-    font: var(--text-body-md);
+    font: 500 clamp(14px, 1.15vw, 18px)/1.25 'Heebo', sans-serif;
     color: var(--color-on-surface);
-    padding: var(--space-stack-sm) 0;
+    padding: clamp(4px, 0.7vh, 10px) 0;
     border-bottom: 1px solid var(--color-outline-variant);
   }
 

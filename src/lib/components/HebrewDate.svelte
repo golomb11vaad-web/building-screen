@@ -19,14 +19,14 @@
   }
 
   .hebrew-date-text {
-    font: var(--text-body-md);
+    font: 400 clamp(16px, 1.3vw, 20px)/1.25 'Heebo', sans-serif;
     color: var(--color-on-surface);
     margin: 0;
   }
 
   .hebrew-date-parasha {
-    font: var(--text-body-md);
+    font: 500 clamp(16px, 1.3vw, 20px)/1.25 'Heebo', sans-serif;
     color: var(--color-primary);
-    margin: var(--space-stack-sm) 0 0;
+    margin: clamp(4px, 0.7vh, 10px) 0 0;
   }
 </style>

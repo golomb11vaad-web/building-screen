@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "smartscreen-lobby",
+  "main": ".svelte-kit/cloudflare/_worker.js",
+  "compatibility_date": "2026-08-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".svelte-kit/cloudflare",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "WEATHER_LAT": "32.0853",
+    "WEATHER_LON": "34.7818",
+    "BUILDING_NAME": "גולומב 11, נהריה",
+    "BUILDING_PHONES": "ועד בית - אלי: 050-302-4414\\nועד בית - אמיל: 052-646-7428\\nועד בית - אביב: 052-340-7815\\nחירום מעליות: 03-963-0060"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "smartscreen-data",
+      "database_id": "6e357104-cbf3-4ad6-a0f4-10921d2117f0",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "smartscreen-uploads"
+    }
+  ]
+}

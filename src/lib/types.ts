@@ -18,6 +18,7 @@ export const WEEKDAYS: Weekday[] = [
 ];
 
 export type MessageStyle = 'plain' | 'photoSlideshow' | 'background';
+export type MessageTextSize = 'small' | 'normal' | 'large';
 
 export type ImageSource = 'upload' | 'curated';
 
@@ -27,10 +28,23 @@ export interface ImageRef {
 	ref: string;
 }
 
+export interface AmbientBackground {
+	id: string;
+	label: string;
+	src: string;
+}
+
+export interface BackgroundMusic {
+	id: string;
+	label: string;
+	src: string;
+}
+
 export interface Message {
 	id: string;
 	text: string;
 	style: MessageStyle;
+	textSize?: MessageTextSize;
 	images?: ImageRef[];
 	pinned: boolean;
 	createdAt: string;
@@ -58,7 +72,7 @@ export interface WeatherData {
 
 export interface NewsItem {
 	title: string;
-	source: 'Ynet' | 'Calcalist';
+	source: 'Ynet' | 'Calcalist' | 'Globes';
 	link: string;
 	publishedAt: string;
 }

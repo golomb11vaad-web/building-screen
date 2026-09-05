@@ -44,7 +44,7 @@ describe('Admin page', () => {
 describe('Admin create form', () => {
   it('renders the message text field', () => {
     render(AdminPage, { props: { data: { messages: [], editMessage: null } } });
-    expect(screen.getByLabelText(/טקסט ההודעה/)).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /טקסט ההודעה/ })).toBeInTheDocument();
   });
 
   it('renders the pin checkbox', () => {
@@ -80,22 +80,31 @@ describe('Style picker', () => {
   });
 });
 
+describe('Text size picker', () => {
+  it('renders small, normal, and large text-size choices', () => {
+    render(AdminPage, { props: { data: { messages: [], editMessage: null } } });
+    expect(screen.getByLabelText(/קטן/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/רגיל/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/גדול/)).toBeInTheDocument();
+  });
+});
+
 describe('Image upload field', () => {
   it('shows file input when background style is selected', async () => {
     render(AdminPage, { props: { data: { messages: [], editMessage: null } } });
     await fireEvent.click(screen.getByLabelText(/רקע/));
-    expect(screen.getByLabelText(/העלאת תמונה/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/תמונת רקע להודעה/)).toBeInTheDocument();
   });
 
   it('shows file input when photoSlideshow style is selected', async () => {
     render(AdminPage, { props: { data: { messages: [], editMessage: null } } });
     await fireEvent.click(screen.getByLabelText(/מצגת/));
-    expect(screen.getByLabelText(/העלאת תמונה/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/תמונה למצגת/)).toBeInTheDocument();
   });
 
   it('does not show file input for plain style', () => {
     render(AdminPage, { props: { data: { messages: [], editMessage: null } } });
-    expect(screen.queryByLabelText(/העלאת תמונה/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/תמונת רקע להודעה|תמונה למצגת/)).not.toBeInTheDocument();
   });
 });
 
@@ -135,8 +144,8 @@ describe('Edit message', () => {
     render(AdminPage, {
       props: { data: { messages: [], editMessage } }
     });
-    const textarea = screen.getByLabelText(/טקסט ההודעה/) as HTMLTextAreaElement;
-    expect(textarea.value).toBe('הודעה לעריכה');
+    const editor = screen.getByRole('textbox', { name: /טקסט ההודעה/ });
+    expect(editor.innerHTML).toBe('הודעה לעריכה');
   });
 
   it('pre-checks the pin checkbox when message is pinned', () => {
@@ -162,7 +171,8 @@ describe('Message list actions', () => {
 
   it('renders an edit link per message', () => {
     render(AdminPage, { props: { data: { messages, editMessage: null } } });
-    expect(screen.getByRole('link', { name: /ערוך/ })).toBeInTheDocument();
+    const editLink = screen.getByRole('link', { name: /ערוך/ });
+    expect(editLink).toHaveAttribute('href', '/admin?edit=m1#message-editor');
   });
 
   it('renders a delete button per message', () => {
