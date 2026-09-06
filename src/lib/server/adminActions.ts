@@ -6,6 +6,7 @@ export interface MessageFields {
   style: MessageStyle;
   textSize: MessageTextSize;
   pinned: boolean;
+  enabled: boolean;
   expiresAt?: string;
   activeDays?: Weekday[];
   activeFrom?: string;
@@ -51,6 +52,7 @@ export function applyCreate(messages: Message[], fields: MessageFields): Message
     style: fields.style,
     textSize: fields.textSize,
     pinned: fields.pinned,
+    enabled: fields.enabled,
     createdAt: now,
     updatedAt: now,
     ...(fields.expiresAt && { expiresAt: fields.expiresAt }),
@@ -71,6 +73,7 @@ export function applyUpdate(messages: Message[], id: string, fields: MessageFiel
       style: fields.style,
       textSize: fields.textSize,
       pinned: fields.pinned,
+      enabled: fields.enabled,
       updatedAt: new Date().toISOString(),
       expiresAt: fields.expiresAt,
       activeDays: fields.activeDays,
@@ -88,6 +91,12 @@ export function applyDelete(messages: Message[], id: string): Message[] {
 export function applyTogglePin(messages: Message[], id: string): Message[] {
   return messages.map((m) =>
     m.id === id ? { ...m, pinned: !m.pinned, updatedAt: new Date().toISOString() } : m
+  );
+}
+
+export function applyToggleVisibility(messages: Message[], id: string): Message[] {
+  return messages.map((m) =>
+    m.id === id ? { ...m, enabled: m.enabled === false, updatedAt: new Date().toISOString() } : m
   );
 }
 

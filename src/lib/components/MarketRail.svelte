@@ -19,8 +19,8 @@
 
 <style>
 	.market-rail {
-		width: clamp(15rem, 18vw, 20rem);
-		flex: 0 0 clamp(15rem, 18vw, 20rem);
+		width: clamp(17rem, 19vw, 22rem);
+		flex: 0 0 clamp(17rem, 19vw, 22rem);
 		height: 100%;
 		min-height: 0;
 		display: flex;
@@ -45,7 +45,7 @@
 	}
 
 	.market-rail__header h2 {
-		font: 500 clamp(24px, 2.1vw, 34px)/1.2 'Heebo', sans-serif;
+		font: 500 clamp(28px, 2.35vw, 38px)/1.2 'Heebo', sans-serif;
 		margin: 4px 0 0;
 	}
 
@@ -65,6 +65,12 @@
 	:global(.market-rail .news-heading) {
 		color: #fff !important;
 	}
+
+	:global(.market-rail .finance-label),
+	:global(.market-rail .finance-change) { font-size: clamp(17px, 1.25vw, 21px); }
+	:global(.market-rail .finance-value) { font-size: clamp(21px, 1.55vw, 26px); }
+	:global(.market-rail .news-source) { font-size: clamp(16px, 1.15vw, 19px); }
+	:global(.market-rail .news-title) { font-size: clamp(19px, 1.45vw, 25px); line-height: 1.25; }
 
 	:global(.market-rail .news-heading) {
 		margin-bottom: clamp(6px, 1vh, 14px);

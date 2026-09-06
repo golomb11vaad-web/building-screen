@@ -185,6 +185,11 @@ describe('Message list actions', () => {
     expect(screen.getByRole('button', { name: /הצמד/ })).toBeInTheDocument();
   });
 
+  it('renders a visibility toggle per message', () => {
+    render(AdminPage, { props: { data: { messages, editMessage: null } } });
+    expect(screen.getByRole('button', { name: /הסתר/ })).toBeInTheDocument();
+  });
+
   it('shows unpin label when message is pinned', () => {
     const pinned = [makeMessage({ id: 'm2', pinned: true })];
     render(AdminPage, { props: { data: { messages: pinned, editMessage: null } } });

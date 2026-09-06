@@ -15,6 +15,9 @@ export function baseMessage(overrides: Partial<Message> = {}): Message {
 }
 
 describe('isEligible - expiry', () => {
+	it('is not eligible when manually hidden', () => {
+		expect(isEligible(baseMessage({ enabled: false }), new Date('2026-06-15T12:00:00.000Z'))).toBe(false);
+	});
 	it('is eligible when expiresAt is absent', () => {
 		const now = new Date('2026-06-15T12:00:00.000Z');
 		expect(isEligible(baseMessage(), now)).toBe(true);

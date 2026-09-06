@@ -16,6 +16,7 @@ import {
   applyUpdate,
   applyDelete,
   applyTogglePin,
+  applyToggleVisibility,
   sanitizeRichText,
   validateMessageFields,
   type MessageFields
@@ -47,7 +48,8 @@ async function parseFields(
     text: sanitizeRichText((data.get('text') as string) ?? ''),
     style,
     textSize,
-    pinned: data.get('pinned') === 'on'
+    pinned: data.get('pinned') === 'on',
+    enabled: data.get('enabled') === 'on'
   };
 
   if (style !== 'plain') {
@@ -146,6 +148,15 @@ export const actions: Actions = {
     const id = data.get('id') as string;
     if (!id) return fail(400, { error: 'מזהה חסר' });
     await saveSharedMessages(applyTogglePin(await loadSharedMessages(platform?.env.DB), id), platform?.env.DB);
+    redirect(303, '/admin');
+  },
+
+  toggleVisibility: async ({ request, cookies, platform }) => {
+    requireAuth(cookies, platform);
+    const data = await request.formData();
+    const id = data.get('id') as string;
+    if (!id) return fail(400, { error: 'מזהה חסר' });
+    await saveSharedMessages(applyToggleVisibility(await loadSharedMessages(platform?.env.DB), id), platform?.env.DB);
     redirect(303, '/admin');
   },
 

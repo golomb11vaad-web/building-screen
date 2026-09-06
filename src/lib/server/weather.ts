@@ -1,4 +1,4 @@
-import type { WeatherData } from '$lib/types';
+import type { ForecastDay, WeatherData } from '$lib/types';
 
 const WMO_LABELS: Record<number, string> = {
   0: 'שמש מלאה',
@@ -24,13 +24,19 @@ const WMO_LABELS: Record<number, string> = {
 
 type OpenMeteoResponse = {
   current_weather: { temperature: number; weathercode: number };
-  daily: { temperature_2m_max: number[]; temperature_2m_min: number[] };
+  daily: { time: string[]; weathercode: number[]; temperature_2m_max: number[]; temperature_2m_min: number[] };
 };
 
 export function parseWeather(json: OpenMeteoResponse): WeatherData {
   const { temperature, weathercode } = json.current_weather;
   const max = json.daily.temperature_2m_max[0];
   const min = json.daily.temperature_2m_min[0];
+	const forecast: ForecastDay[] = json.daily.time.slice(1, 5).map((date, index) => ({
+		date,
+		weatherCode: json.daily.weathercode[index + 1],
+		temperatureMax: Math.round(json.daily.temperature_2m_max[index + 1]),
+		temperatureMin: Math.round(json.daily.temperature_2m_min[index + 1])
+	}));
   return {
     temperatureCurrent: Math.round(temperature),
     temperatureMax: Math.round(max),
@@ -38,6 +44,7 @@ export function parseWeather(json: OpenMeteoResponse): WeatherData {
     weatherCode: weathercode,
     conditionLabel: WMO_LABELS[weathercode] ?? 'לא ידוע',
     fetchedAt: new Date().toISOString(),
+		forecast
   };
 }
 
@@ -54,7 +61,7 @@ export async function getWeather(lat: string, lon: string): Promise<WeatherData 
       `https://api.open-meteo.com/v1/forecast` +
       `?latitude=${lat}&longitude=${lon}` +
       `&current_weather=true` +
-      `&daily=temperature_2m_max,temperature_2m_min` +
+      `&daily=weathercode,temperature_2m_max,temperature_2m_min` +
       `&timezone=Asia%2FJerusalem`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Open-Meteo HTTP ${res.status}`);

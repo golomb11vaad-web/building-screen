@@ -15,6 +15,16 @@
     if ([1, 2, 3, 45, 48].includes(weatherCode)) return 'cloud';
     return 'sun';
   }
+
+  function forecastIcon(weatherCode: number): string {
+    const visual = visualFor(weatherCode);
+    return visual === 'sun' ? '☀️' : visual === 'rain' ? '🌧️' : visual === 'storm' ? '⛈️' : '⛅';
+  }
+
+  function weekday(date: string): string {
+    return new Intl.DateTimeFormat('he-IL', { weekday: 'short', timeZone: 'Asia/Jerusalem' })
+      .format(new Date(`${date}T12:00:00+03:00`));
+  }
 </script>
 
 <div class="weather-widget">
@@ -47,6 +57,18 @@
         <p class="weather-range"><strong>{weather.temperatureMax}°</strong> גבוה <span></span> <strong>{weather.temperatureMin}°</strong> נמוך</p>
         <p class="weather-updated">עודכן ב־{formatTime(weather.fetchedAt)}</p>
       </div>
+			{#if weather.forecast?.length}
+				<div class="weather-forecast" aria-label="תחזית לארבעת הימים הקרובים">
+					{#each weather.forecast as day (day.date)}
+						<div class="weather-forecast__day">
+							<span>{weekday(day.date)}</span>
+							<span class="weather-forecast__icon" aria-hidden="true">{forecastIcon(day.weatherCode)}</span>
+							<strong dir="ltr">{day.temperatureMax}°</strong>
+							<small dir="ltr">{day.temperatureMin}°</small>
+						</div>
+					{/each}
+				</div>
+			{/if}
     </section>
   {:else}
     <p class="weather-placeholder">מזג האוויר אינו זמין</p>
@@ -180,6 +202,27 @@
     margin: 0;
     white-space: nowrap;
   }
+
+  .weather-forecast {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .weather-forecast__day {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font: 500 clamp(11px, 0.9vw, 14px)/1.05 'Heebo', sans-serif;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .weather-forecast__icon { font-size: clamp(16px, 1.25vw, 21px); }
+  .weather-forecast__day strong { color: #fff; }
+  .weather-forecast__day small { color: rgba(255, 255, 255, 0.7); }
 
   .weather-placeholder {
     font: var(--text-headline-md);

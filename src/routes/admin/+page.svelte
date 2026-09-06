@@ -63,10 +63,11 @@
     {:else}
       <ul class="admin-list__items">
         {#each sortedMessages as message (message.id)}
-          <li class="admin-list__item" class:admin-list__item--pinned={message.pinned}>
+          <li class="admin-list__item" class:admin-list__item--pinned={message.pinned} class:admin-list__item--hidden={message.enabled === false}>
             <span class="admin-list__pin">{message.pinned ? '📌' : ''}</span>
             <span class="admin-list__text">{message.text}</span>
             <span class="admin-list__style">{message.style}</span>
+				{#if message.enabled === false}<span class="admin-list__hidden-label">מוסתרת</span>{/if}
 
             <div class="admin-list__actions">
               <a
@@ -78,6 +79,13 @@
                 <input type="hidden" name="id" value={message.id} />
                 <button class="admin-list__action-btn" type="submit">
                   {message.pinned ? 'בטל הצמדה' : 'הצמד'}
+                </button>
+              </form>
+
+              <form method="POST" action="?/toggleVisibility" class="admin-list__action-form">
+                <input type="hidden" name="id" value={message.id} />
+                <button class="admin-list__action-btn" type="submit">
+                  {message.enabled === false ? 'הצג' : 'הסתר'}
                 </button>
               </form>
 
@@ -211,6 +219,11 @@
           checked={data.editMessage?.pinned ?? false}
         />
         <label class="message-form__label" for="msg-pinned">מוצמד (מוצג ראשון)</label>
+      </div>
+
+      <div class="message-form__field message-form__field--inline">
+        <input class="message-form__checkbox" id="msg-enabled" type="checkbox" name="enabled" checked={data.editMessage?.enabled !== false} />
+        <label class="message-form__label" for="msg-enabled">הצג הודעה במסך</label>
       </div>
 
       <fieldset class="message-form__fieldset">
@@ -520,6 +533,9 @@
     padding-block-start: var(--space-stack-lg);
     border-block-start: 1px solid var(--color-outline-variant);
   }
+
+  .admin-list__item--hidden { opacity: 0.58; }
+  .admin-list__hidden-label { font: var(--text-label-caps); color: var(--color-error); }
 
   .ambient-manager {
     margin-block-start: var(--space-stack-lg);

@@ -4,8 +4,10 @@ import { parseWeather } from './weather';
 const FIXTURE = {
   current_weather: { temperature: 28.6, weathercode: 0, windspeed: 12.3 },
   daily: {
-    temperature_2m_max: [31.2],
-    temperature_2m_min: [21.5],
+    time: ['2026-06-16', '2026-06-17', '2026-06-18', '2026-06-19', '2026-06-20'],
+    weathercode: [0, 1, 2, 61, 3],
+    temperature_2m_max: [31.2, 30.1, 29.4, 27.8, 28.3],
+    temperature_2m_min: [21.5, 20.6, 20.1, 19.8, 20.4],
   },
 };
 
@@ -34,6 +36,12 @@ describe('parseWeather', () => {
     const result = parseWeather(FIXTURE);
     expect(() => new Date(result.fetchedAt).toISOString()).not.toThrow();
   });
+
+  it('includes the next four daily forecasts', () => {
+    const result = parseWeather(FIXTURE);
+    expect(result.forecast).toHaveLength(4);
+    expect(result.forecast[0]).toMatchObject({ date: '2026-06-17', temperatureMax: 30, temperatureMin: 21 });
+  });
 });
 
 // --- cache / fetch tests ---
@@ -45,7 +53,12 @@ vi.stubGlobal('fetch', mockFetch);
 
 const OPEN_METEO_OK = {
   current_weather: { temperature: 25.0, weathercode: 1, windspeed: 8.0 },
-  daily: { temperature_2m_max: [28.0], temperature_2m_min: [19.0] },
+  daily: {
+    time: ['2026-06-16', '2026-06-17', '2026-06-18', '2026-06-19', '2026-06-20'],
+    weathercode: [1, 1, 2, 3, 61],
+    temperature_2m_max: [28.0, 29.0, 28.0, 27.0, 26.0],
+    temperature_2m_min: [19.0, 20.0, 19.0, 18.0, 18.0]
+  },
 };
 
 const LAT = '32.0853';

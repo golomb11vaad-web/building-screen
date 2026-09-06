@@ -47,6 +47,7 @@ export interface Message {
 	textSize?: MessageTextSize;
 	images?: ImageRef[];
 	pinned: boolean;
+	enabled?: boolean;
 	createdAt: string;
 	updatedAt: string;
 	expiresAt?: string;
@@ -68,6 +69,14 @@ export interface WeatherData {
 	weatherCode: number;
 	conditionLabel: string;
 	fetchedAt: string;
+	forecast: ForecastDay[];
+}
+
+export interface ForecastDay {
+	date: string;
+	weatherCode: number;
+	temperatureMax: number;
+	temperatureMin: number;
 }
 
 export interface NewsItem {

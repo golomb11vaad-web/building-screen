@@ -4,6 +4,7 @@ import {
   applyUpdate,
   applyDelete,
   applyTogglePin,
+  applyToggleVisibility,
   normalizeLegacyRichText,
   sanitizeRichText,
   validateMessageFields,
@@ -24,7 +25,8 @@ const fields: MessageFields = {
   text: 'הודעה חדשה',
   style: 'plain',
   textSize: 'normal',
-  pinned: false
+  pinned: false,
+  enabled: true
 };
 
 describe('applyCreate', () => {
@@ -127,6 +129,13 @@ describe('validateMessageFields', () => {
 
   it('returns null when only activeFrom is set', () => {
     expect(validateMessageFields({ ...fields, activeFrom: '2026-01-01' })).toBeNull();
+  });
+});
+
+describe('applyToggleVisibility', () => {
+  it('hides an enabled message and restores a hidden one', () => {
+    expect(applyToggleVisibility([base], 'msg-1')[0].enabled).toBe(false);
+    expect(applyToggleVisibility([{ ...base, enabled: false }], 'msg-1')[0].enabled).toBe(true);
   });
 });
 

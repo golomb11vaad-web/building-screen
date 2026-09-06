@@ -20,6 +20,7 @@ function dateOnlyFor(date: Date): string {
 }
 
 export function isEligible(message: Message, now: Date): boolean {
+	if (message.enabled === false) return false;
 	if (message.expiresAt && new Date(message.expiresAt).getTime() <= now.getTime()) {
 		return false;
 	}
