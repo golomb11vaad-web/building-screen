@@ -49,7 +49,7 @@
 
   /* Keep the forecast visually separate from the building contact details. */
   .sidebar :global(.weather-widget) {
-    margin-bottom: clamp(8px, 1.2vh, 16px);
+    margin-bottom: clamp(18px, 2.5vh, 34px);
   }
 
   @media (max-height: 900px) {

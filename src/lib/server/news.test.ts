@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseRssItems } from './news';
+import { newestFreshNews, parseRssItems } from './news';
 
 const FIXTURE_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -51,13 +51,26 @@ vi.stubGlobal('fetch', mockFetch);
 
 const YNET_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"><channel>
-  <item><title>ynet חדשה</title><link>https://www.ynet.co.il/a</link><pubDate>Mon, 16 Jun 2026 10:00:00 +0300</pubDate></item>
+  <item><title>ynet חדשה</title><link>https://www.ynet.co.il/a</link><pubDate>${new Date().toUTCString()}</pubDate></item>
 </channel></rss>`;
 
 const GLOBES_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"><channel>
-  <item><title>גלובס חדשה</title><link>https://www.globes.co.il/b</link><pubDate>Mon, 16 Jun 2026 09:00:00 +0300</pubDate></item>
+  <item><title>גלובס חדשה</title><link>https://www.globes.co.il/b</link><pubDate>${new Date().toUTCString()}</pubDate></item>
 </channel></rss>`;
+
+describe('newestFreshNews', () => {
+  it('removes stale headlines and orders current headlines newest first', () => {
+    const now = Date.parse('2026-09-06T10:00:00.000Z');
+    const items = newestFreshNews([
+      { title: 'ישן', source: 'Globes', link: 'https://example.com/old', publishedAt: '2026-09-03T09:00:00.000Z' },
+      { title: 'חדש יותר', source: 'Globes', link: 'https://example.com/newer', publishedAt: '2026-09-06T09:00:00.000Z' },
+      { title: 'חדש', source: 'Ynet', link: 'https://example.com/new', publishedAt: '2026-09-06T09:30:00.000Z' },
+    ], now);
+
+    expect(items.map((item) => item.title)).toEqual(['חדש', 'חדש יותר']);
+  });
+});
 
 describe('getNews', () => {
   beforeEach(() => {
