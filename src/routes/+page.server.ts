@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ platform }) => {
 	const buildingPhones = runtime.BUILDING_PHONES
 		? runtime.BUILDING_PHONES.split(/\r?\n|\\n/).filter(Boolean)
 		: [];
-	const marketNews = news.filter((item) => item.source === 'Globes').slice(0, 3);
+	const marketNews = news.filter((item) => item.source === 'Globes').slice(0, 4);
 	const generalNews = news.filter((item) => item.source !== 'Globes');
 	return {
 		rotation: sortForRotation(eligible), weather, news: generalNews.length ? generalNews : news,

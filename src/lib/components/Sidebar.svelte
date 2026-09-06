@@ -44,7 +44,12 @@
 		border-radius: 28px;
     padding: 18px clamp(24px, 2.6vw, 40px);
     overflow: hidden;
-		box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Keep the forecast visually separate from the building contact details. */
+  .sidebar :global(.weather-widget) {
+    margin-bottom: clamp(8px, 1.2vh, 16px);
   }
 
   @media (max-height: 900px) {

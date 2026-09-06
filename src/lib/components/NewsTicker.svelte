@@ -28,7 +28,7 @@
 
 <style>
   .news-ticker {
-    height: 75px;
+    height: 82px;
     display: flex;
     align-items: center;
     background: var(--color-surface-container);
@@ -39,7 +39,7 @@
   }
 
   .ticker-label {
-    font: var(--text-label-caps);
+    font: 700 clamp(16px, 1.15vw, 20px)/1 'Heebo', sans-serif;
     color: var(--color-on-primary);
     background: var(--color-primary);
     padding: 4px 12px;
@@ -63,7 +63,7 @@
   }
 
   .ticker-headline {
-    font: var(--text-body-md);
+    font: 500 clamp(19px, 1.4vw, 24px)/1.25 'Heebo', sans-serif;
     color: var(--color-on-surface);
   }
 

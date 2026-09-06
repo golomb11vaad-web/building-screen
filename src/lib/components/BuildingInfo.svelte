@@ -34,7 +34,7 @@
   }
 
   .building-phone {
-    font: 500 clamp(18px, 1.45vw, 23px)/1.3 'Heebo', sans-serif;
+    font: 500 clamp(21px, 1.65vw, 27px)/1.28 'Heebo', sans-serif;
     color: var(--color-on-surface);
     padding: clamp(4px, 0.7vh, 10px) 0;
     border-bottom: 1px solid var(--color-outline-variant);
